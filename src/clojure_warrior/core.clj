@@ -11,15 +11,8 @@
   (if-not s
     {:type :floor}
     (let [chars (set (seq (name s)))
-          type (cond
-                 (contains? chars \-) :wall
-                 (contains? chars \_) :stairs
-                 (contains? chars \C) :captive
-                 (contains? chars \a) :archer
-                 (contains? chars \*) :warrior
-                 (contains? chars \s) :sludge
-                 (contains? chars \S) :thick-sludge
-                 (contains? chars \w) :wizard)
+          type (or (units/define-char->type (first chars))
+                   (units/define-char->type (last chars)) )
           direction (cond
                       (contains? chars \>) :east
                       (contains? chars \<) :west)

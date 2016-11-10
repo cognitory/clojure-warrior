@@ -3,8 +3,8 @@
 (def reference
   {:archer
    {:type :archer
-    :in-char :a
-    :display-char "a"
+    :define-char \a
+    :display-char \a
     :abilities #{:shoot :look}
     :shoot-power 3
     :max-health 7
@@ -16,11 +16,13 @@
    :captive
    {:type :captive
     :max-health 1
-    :display-char "C"}
+    :define-char \C
+    :display-char \C}
 
    :sludge
    {:type :sludge
-    :display-char "s"
+    :define-char \s
+    :display-char \s
     :abilities #{:attack :feel}
     :attack-power 3
     :max-health 12
@@ -30,7 +32,8 @@
 
    :thick-sludge
    {:type :thick-sludge
-    :display-char "S"
+    :define-char \S
+    :display-char \S
     :abilities #{:attack :feel}
     :attack-power 3
     :max-health 24
@@ -40,7 +43,8 @@
 
    :wizard
    {:type :wizard
-    :display-char "w"
+    :define-char \w
+    :display-char \w
     :abilities #{:shoot :look}
     :shoot-power 11
     :max-health 3
@@ -50,19 +54,30 @@
 
    :warrior
    {:type :warrior
-    :display-char "@"
+    :define-char \*
+    :display-char \@
     :max-health 20
     :attack-power 5
     :shoot-power 3}
 
    :wall
    {:type :wall
-    :display-char "|"}
+    :define-char \-
+    :display-char \|}
 
    :stairs
    {:type :stairs
-    :display-char ">"}
+    :define-char \_
+    :display-char \>}
 
    :floor
    {:type :floor
+    :define-char nil
     :display-char " "}})
+
+(def define-char->type
+  (reduce
+    (fn [memo u]
+      (assoc memo (u :define-char) (u :type)))
+    {}
+    (vals reference)))

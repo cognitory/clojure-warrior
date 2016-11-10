@@ -71,4 +71,21 @@
         (is (= expected-state (play/take-warrior-action state action))))
 
       ; TODO have a message appended
-      )))
+      ))
+
+  (testing "pivot"
+    (testing "turns warrior west->east"
+      (let [state {:board [[{:type :warrior
+                             :direction :east}]]}
+            action [:pivot]
+            expected-state {:board [[{:type :warrior
+                                      :direction :west}]]}]
+        (is (= expected-state (play/take-warrior-action state action)))))
+
+    (testing "turns warrior east->west"
+      (let [state {:board [[{:type :warrior
+                             :direction :west}]]}
+            action [:pivot]
+            expected-state {:board [[{:type :warrior
+                                      :direction :east}]]}]
+        (is (= expected-state (play/take-warrior-action state action)))))))

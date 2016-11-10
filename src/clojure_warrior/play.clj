@@ -44,6 +44,12 @@
                       (assoc-in (reverse target-position) (dissoc warrior :position)))
                   board)))))
 
-
-; consider not storing units on the board
-; but in a list, with each unit having a position
+(defmethod take-warrior-action :pivot
+  [state _]
+  (let [warrior (get-warrior (state :board))
+        p (reverse (warrior :position))]
+    (update-in state [:board (first p) (last p) :direction]
+               (fn [d]
+                 (case d
+                   :east :west
+                   :west :east)))))

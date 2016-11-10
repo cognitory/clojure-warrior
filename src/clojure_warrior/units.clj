@@ -53,4 +53,16 @@
     :display-char "@"
     :max-health 20
     :attack-power 5
-    :shoot-power 3}})
+    :shoot-power 3}
+
+   :wall
+   {:type :wall
+    :display-char "|"}
+
+   :stairs
+   {:type :stairs
+    :display-char ">"}
+
+   :floor
+   {:type :floor
+    :display-char " "}})

@@ -16,16 +16,16 @@
                  {:type :archer
                   :direction :east
                   :health 7}
-                 nil
-                 nil
+                 {:type :floor}
+                 {:type :floor}
                  {:type :warrior
                   :health 20
                   :direction :east}
-                 nil
+                 {:type :floor}
                  {:type :thick-sludge
                   :direction :west
                   :health 24}
-                 nil
+                 {:type :floor}
                  {:type :wizard
                   :direction :west
                   :health 3}
@@ -35,3 +35,36 @@
                  {:type :wall}]]}]
       (is (= out
              (w/generate-initial-level-state in))))))
+
+
+(deftest generate-display
+  (testing "..."
+    (let [in {:board
+              [[{:type :wall}
+                {:type :stairs}
+                {:type :captive
+                 :direction :east
+                 :health 1}
+                {:type :archer
+                 :direction :east
+                 :health 7}
+                {:type :floor}
+                {:type :floor}
+                {:type :warrior
+                 :health 20
+                 :direction :east}
+                {:type :floor}
+                {:type :thick-sludge
+                 :direction :west
+                 :health 24}
+                {:type :floor}
+                {:type :wizard
+                 :direction :west
+                 :health 3}
+                {:type :captive
+                 :direction :west
+                 :health 1}
+                {:type :wall}]]}
+          out "-------------\n|>Ca  @ S wC|\n-------------"]
+
+      (is (= out (w/generate-display in))))))

@@ -1,0 +1,12 @@
+{:id 9
+
+ :description "Time to hone your skills and apply all of the abilities that you have learned."
+ :tip "Watch your back."
+ :clue "Don't just keep shooting the bow while you are being attacked from behind."
+
+ :time-bonus 40
+ :ace-score 100
+
+ :board [[:__ :C> :a> nil nil :*> nil :<S nil :<w :<C]]
+
+ :abilities #{:walk :attack :rest :rescue :pivot :shoot}}

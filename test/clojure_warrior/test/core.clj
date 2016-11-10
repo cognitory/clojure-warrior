@@ -5,8 +5,7 @@
     [clojure-warrior.play :as play]))
 
 (deftest generate-initial-level-state
-  (testing "..."
-
+  (testing "generate-initial-level-state"
     (let [in {:board [[:__ :C> :a> nil nil :*> nil :<S nil :<w :<C]]}
           out {:board
                [[{:type :wall}
@@ -39,7 +38,7 @@
 
 
 (deftest generate-display
-  (testing "..."
+  (testing "generate-display"
     (let [in {:board
               [[{:type :wall}
                 {:type :stairs}
@@ -67,7 +66,6 @@
                  :health 1}
                 {:type :wall}]]}
           out "-------------\n|>Ca  @ S wC|\n-------------"]
-
       (is (= out (w/generate-display in))))))
 
 (deftest get-warrior

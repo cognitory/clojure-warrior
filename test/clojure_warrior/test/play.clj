@@ -217,4 +217,42 @@
                                       :shoot-power 5.0
                                       :direction :west}
                                      {:type :whatever}]]}]
+        (is (= expected-state (play/take-warrior-action state action))))))
+
+  (testing "rescue"
+    (testing "receives 20 points if captive; captive is removed"
+      (testing "can rescue forward"
+        (let [state {:board [[{:type :warrior
+                               :points 0.0
+                               :direction :east}
+                              {:type :captive}]]}
+              action [:rescue :forward]
+              expected-state {:board [[{:type :warrior
+                                        :points 20.0
+                                        :direction :east}
+                                       {:type :floor}]]}]
+          (is (= expected-state (play/take-warrior-action state action)))))
+
+      (testing "can rescue backward"
+        (let [state {:board [[{:type :warrior
+                               :points 0.0
+                               :direction :west}
+                              {:type :captive}]]}
+              action [:rescue :backward]
+              expected-state {:board [[{:type :warrior
+                                        :points 20.0
+                                        :direction :west}
+                                       {:type :floor}]]}]
+          (is (= expected-state (play/take-warrior-action state action))))))
+
+    (testing "if not a captive, no effect"
+      (let [state {:board [[{:type :warrior
+                             :points 0.0
+                             :direction :east}
+                            {:type :whatever}]]}
+            action [:rescue :forward]
+            expected-state {:board [[{:type :warrior
+                                      :points 0.0
+                                      :direction :east}
+                                     {:type :whatever}]]}]
         (is (= expected-state (play/take-warrior-action state action)))))))

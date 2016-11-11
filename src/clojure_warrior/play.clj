@@ -111,3 +111,17 @@
                    (fn [health]
                      (max 0 (- health (warrior :shoot-power))))))
       state)))
+
+(defmethod take-warrior-action :rescue
+  [state [_ direction]]
+  (let [warrior (get-warrior (state :board))
+        target (first-unit-in-range (state :board) warrior direction 1)]
+    (if (and target (= :captive (:type target)))
+      (-> state
+          (update-in [:board (last (warrior :position))
+                      (first (warrior :position)) :points]
+                     (fn [points]
+                       (+ points 20)))
+          (assoc-in [:board (last (target :position)) (first (target :position))]
+            {:type :floor}))
+      state)))

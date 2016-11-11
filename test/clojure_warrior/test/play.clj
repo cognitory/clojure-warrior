@@ -142,4 +142,79 @@
                                       :attack-power 5.0
                                       :direction :west}
                                      {:type :whatever}]]}]
+        (is (= expected-state (play/take-warrior-action state action))))))
+
+  (testing "shoot (damages first unit within 3 units ahead)"
+    (testing "can shoot forward (range 1)"
+      (let [state {:board [[{:type :warrior
+                             :shoot-power 3.0
+                             :direction :east}
+                            {:type :whatever
+                             :health 10.0}]]}
+            action [:shoot :forward]
+            expected-state {:board [[{:type :warrior
+                                      :shoot-power 3.0
+                                      :direction :east}
+                                     {:type :whatever
+                                      :health 7.0}]]}]
+        (is (= expected-state (play/take-warrior-action state action)))))
+
+    (testing "can shoot forward (range 3)"
+      (let [state {:board [[{:type :warrior
+                             :shoot-power 3.0
+                             :direction :east}
+                            {:type :floor}
+                            {:type :floor}
+                            {:type :whatever
+                             :health 10.0}]]}
+            action [:shoot :forward]
+            expected-state {:board [[{:type :warrior
+                                      :shoot-power 3.0
+                                      :direction :east}
+                                     {:type :floor}
+                                     {:type :floor}
+                                     {:type :whatever
+                                      :health 7.0}]]}]
+        (is (= expected-state (play/take-warrior-action state action)))))
+
+    (testing "when nothing is in range, no effect"
+      (let [state {:board [[{:type :warrior
+                             :shoot-power 3.0
+                             :direction :east}
+                            {:type :floor}
+                            {:type :floor}
+                            {:type :floor}]]}
+            action [:shoot :forward]
+            expected-state {:board [[{:type :warrior
+                                      :shoot-power 3.0
+                                      :direction :east}
+                                     {:type :floor}
+                                     {:type :floor}
+                                     {:type :floor}]]}]
+        (is (= expected-state (play/take-warrior-action state action)))))
+
+    (testing "can shoot backward"
+      (let [state {:board [[{:type :warrior
+                             :shoot-power 3.0
+                             :direction :west}
+                            {:type :whatever
+                             :health 10.0}]]}
+            action [:shoot :backward]
+            expected-state {:board [[{:type :warrior
+                                      :shoot-power 3.0
+                                      :direction :west}
+                                     {:type :whatever
+                                      :health 7.0}]]}]
+        (is (= expected-state (play/take-warrior-action state action)))))
+
+    (testing "shooting object without health has no effect"
+      (let [state {:board [[{:type :warrior
+                             :shoot-power 5.0
+                             :direction :west}
+                            {:type :whatever}]]}
+            action [:shoot :forward]
+            expected-state {:board [[{:type :warrior
+                                      :shoot-power 5.0
+                                      :direction :west}
+                                     {:type :whatever}]]}]
         (is (= expected-state (play/take-warrior-action state action)))))))

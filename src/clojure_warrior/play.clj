@@ -79,7 +79,7 @@
         attack-power (* (warrior :attack-power) power-multiplier)]
     (as-> state $
       (add-message $ (str "You attack " (name direction)))
-      (if target
+      (if (and target (target :health))
         (let [damage (min attack-power (target :health))
               target-new-health (max 0 (- (target :health) damage))]
           (-> $
@@ -89,7 +89,7 @@
                                   (str "and dies"))))
               (update-at target-position :health
                          (fn [health]
-                           (max 0 (- health attack-power))))))
+                           target-new-health))))
         (add-message $ "You hit nothing")))))
 
 (defmethod take-warrior-action :shoot

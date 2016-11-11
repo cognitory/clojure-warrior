@@ -176,15 +176,17 @@
   (mapv (fn [row]
           (mapv f row)) board))
 
+(defn remove-dead-units [board]
+  (map-units (fn [unit]
+               (if (and
+                     (contains? unit :health)
+                     (>= 0 (unit :health)))
+                 {:type :floor}
+                 unit))
+             board))
+
 (defn take-env-actions [state]
-  (update state :board (fn [board]
-                         (map-units (fn [unit]
-                                      (if (and
-                                            (contains? unit :health)
-                                            (>= 0 (unit :health)))
-                                        {:type :floor}
-                                        unit))
-                                    board))))
+  (update state :board remove-dead-units))
 
 (defn take-npc-actions [state]
   ; TODO

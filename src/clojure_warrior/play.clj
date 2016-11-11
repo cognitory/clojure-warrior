@@ -3,6 +3,12 @@
 (defn add-message [state message]
   (update state :messages conj message))
 
+(defn assoc-at [state position value]
+  (assoc-in state [:board (last position) (first position)] value))
+
+(defn update-at [state position k fn]
+  (update-in state [:board (last position) (first position) k] fn))
+
 (defn get-units
   "Returns list of units, with their positions"
   [board]
@@ -66,15 +72,14 @@
         (add-message $ (str "You walk " (name direction)))
         (if (= :floor (:type target))
           (-> $
-              (assoc-in [:board (last (warrior :position)) (first (warrior :position))]  {:type :floor})
-              (assoc-in [:board (last (target :position)) (first (target :position))] (dissoc warrior :position)))
+              (assoc-at (warrior :position) {:type :floor})
+              (assoc-at (target :position) (dissoc warrior :position)))
           (add-message $ (str "You bump into a " (name (target :type))))))))
 
 (defmethod take-warrior-action :pivot
   [state _]
   (let [warrior (get-warrior (state :board))]
-    (update-in state [:board (last (warrior :position))
-                      (first (warrior :position)) :direction]
+    (update-at state (warrior :position) :direction
                (fn [d]
                  (case d
                    :east :west
@@ -84,8 +89,7 @@
   [state _]
   (let [warrior (get-warrior (state :board))
         max-health (:max-health warrior)]
-    (update-in state [:board (last (warrior :position))
-                      (first (warrior :position)) :health]
+    (update-at state (warrior :position) :health
                (fn [health]
                  (min max-health (+ health (* max-health 0.1)))))))
 
@@ -98,8 +102,7 @@
                            :forward 1.0
                            :backward 0.5)]
     (if can-attack?
-      (update-in state [:board (last target-position)
-                        (first target-position) :health]
+      (update-at state target-position :health
                  (fn [health]
                    (max (- health (* (warrior :attack-power) power-multiplier)))))
       state)))
@@ -109,8 +112,7 @@
   (let [warrior (get-warrior (state :board))
         target (first-unit-in-range (state :board) warrior direction 3)]
     (if target
-      (update-in state [:board (last (target :position))
-                        (first (target :position)) :health]
+      (update-at state (target :position) :health
                  (fn [health]
                    (max 0 (- health (warrior :shoot-power)))))
       state)))
@@ -124,11 +126,8 @@
       (if (and target (= :captive (:type target)))
         (-> $
             (add-message "You unbind and rescue a captive")
-            (assoc-in [:board (last (target :position)) (first (target :position))]
-              {:type :floor})
-            (update-in [:board (last (warrior :position))
-                        (first (warrior :position)) :points]
-                       (fn [points]
-                         (+ points 20)))
+            (assoc-at (target :position) {:type :floor})
+            (update-at (warrior :position) :points (fn [points]
+                                                     (+ points 20)))
             (add-message "You earn 20 points"))
         (add-message $ "There is no captive to rescue")))))

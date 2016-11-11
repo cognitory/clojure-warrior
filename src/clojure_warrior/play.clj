@@ -123,12 +123,18 @@
 (defmethod take-warrior-action :shoot
   [state [_ direction]]
   (let [warrior (get-warrior (state :board))
-        target (first-unit-in-range (state :board) warrior direction 3)]
-    (if target
-      (update-at state (target :position) :health
-                 (fn [health]
-                   (max 0 (- health (warrior :shoot-power)))))
-      state)))
+        target (first-unit-in-range (state :board) warrior direction 3)
+        attack-power (warrior :shoot-power)]
+    (as-> state $
+      (add-message $ (str "You shoot " (name direction)))
+      (if (and target (target :health))
+        (-> $
+            (add-message (str "You hit a " (name (:type target)) ", dealing " attack-power " damage"))
+            (update-at (target :position) :health
+                       (fn [health]
+                         (max 0 (- health attack-power)))))
+        (-> $
+            (add-message "You hit nothing"))))))
 
 (defmethod take-warrior-action :rescue
   [state [_ direction]]

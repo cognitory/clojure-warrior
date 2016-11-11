@@ -1,4 +1,6 @@
-(ns clojure-warrior.play)
+(ns clojure-warrior.play
+  (:require
+    [clojure-warrior.import :as import]))
 
 (defn add-message [state message]
   (update state :messages conj message))
@@ -70,10 +72,19 @@
         target (unit-at-position (state :board) target-position)]
     (as-> state $
         (add-message $ (str "You walk " (name direction)))
-        (if (= :floor (:type target))
+        (cond
+          (= :floor (:type target))
           (-> $
               (assoc-at (warrior :position) {:type :floor})
               (assoc-at (target :position) (dissoc warrior :position)))
+          (= :stairs (:type target))
+          (-> $
+              (add-message "You walk up the stairs")
+              (assoc-at (warrior :position) {:type :floor})
+              (assoc-at (target :position) (-> warrior
+                                               (assoc :at-stairs true)
+                                               (dissoc :position))))
+          :else
           (add-message $ (str "You bump into a " (name (target :type))))))))
 
 (defmethod take-warrior-action :pivot
@@ -150,3 +161,42 @@
                                                      (+ points 20)))
             (add-message "You earn 20 points"))
         (add-message $ "There is no captive to rescue")))))
+
+
+(defn get-public-state [state]
+  ; TODO
+  )
+
+(defn take-env-actions [state]
+  ; TODO
+  state)
+
+(defn take-npc-actions [state]
+  ; TODO
+  state)
+
+(defn play-turn [init-state users-code]
+  (let [warrior-action (users-code (get-public-state init-state))
+        ; TODO validate warrior-action
+        post-user-state (take-warrior-action init-state warrior-action)
+        post-env-state (take-env-actions post-user-state)
+        post-npc-state (take-npc-actions post-env-state)
+        final-state (take-env-actions post-npc-state)]
+    final-state))
+
+(defn warrior-at-stairs? [state]
+  (->> (state :board)
+       flatten
+       (map :at-stairs)
+       (some true?)))
+
+(defn play-level [history users-code]
+  (if (or
+        (> (count history) 20)
+        (warrior-at-stairs? (last history)))
+    history
+    (play-level (conj history (play-turn (last history) users-code)) users-code)))
+
+(defn start-level [level-definition users-code]
+  (let [init-state [(import/generate-initial-level-state level-definition)]]
+    (play-level init-state users-code)))

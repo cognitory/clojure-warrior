@@ -29,6 +29,20 @@
                             :messages ["You walk forward"]}]
         (is (= expected-state (play/take-warrior-action state action)))))
 
+    (testing "can walk onto stairs"
+      (let [state {:board [[{:type :warrior
+                             :direction :east}
+                            {:type :stairs}]]
+                   :messages []}
+            action [:walk :forward]
+            expected-state {:board [[{:type :floor}
+                                     {:type :warrior
+                                      :at-stairs true
+                                      :direction :east}]]
+                            :messages ["You walk forward"
+                                       "You walk up the stairs"]}]
+        (is (= expected-state (play/take-warrior-action state action)))))
+
     (testing "can walk backward when open space"
       (let [state {:board [[{:type :floor}
                             {:type :warrior
@@ -318,3 +332,37 @@
                             :messages ["You rescue forward"
                                        "There is no captive to rescue"]}]
         (is (= expected-state (play/take-warrior-action state action)))))))
+
+(deftest play-turn
+  (testing "play-turn"
+    (let [init-state {:board [[{:type :warrior
+                                :direction :east}
+                               {:type :floor}]]
+                      :messages []}
+          users-code (fn [state]
+                       [:walk :forward])]
+
+      (is (= {:board [[{:type :floor}
+                       {:type :warrior
+                        :direction :east}]]
+              :messages ["You walk forward"]}
+             (play/play-turn init-state users-code))))))
+
+(deftest start-level
+  (testing "start-level"
+    (let [level {:board [[:*> nil nil :__]]}
+          user-code (fn [state]
+                      [:walk :forward])]
+      (is (= [["You enter the tower"]
+              ["You enter the tower"
+               "You walk forward"]
+              ["You enter the tower"
+               "You walk forward"
+               "You walk forward"]
+              ["You enter the tower"
+               "You walk forward"
+               "You walk forward"
+               "You walk forward"
+               "You walk up the stairs"]]
+             (map :messages (play/start-level level user-code)))))))
+

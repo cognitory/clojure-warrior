@@ -56,18 +56,19 @@
   "Returns new state after performing warrior action"
   (fn [state action] (first action)))
 
+; Move in the given direction
 (defmethod take-warrior-action :walk
   [state [_ direction]]
   (let [warrior (get-warrior (state :board))
         target-position (action-target-position warrior direction)
-        can-walk? (= :floor (:type (unit-at-position (state :board) target-position)))]
-    (update state :board
-              (fn [board]
-                (if can-walk?
-                  (-> board
-                      (assoc-in (reverse (warrior :position)) {:type :floor})
-                      (assoc-in (reverse target-position) (dissoc warrior :position)))
-                  board)))))
+        target (unit-at-position (state :board) target-position)]
+    (as-> state $
+        (add-message $ (str "You walk " (name direction)))
+        (if (= :floor (:type target))
+          (-> $
+              (assoc-in [:board (last (warrior :position)) (first (warrior :position))]  {:type :floor})
+              (assoc-in [:board (last (target :position)) (first (target :position))] (dissoc warrior :position)))
+          (add-message $ (str "You bump into a " (name (target :type))))))))
 
 (defmethod take-warrior-action :pivot
   [state _]

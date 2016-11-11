@@ -20,50 +20,51 @@
     (testing "can walk forward when open space"
       (let [state {:board [[{:type :warrior
                              :direction :east}
-                            {:type :floor}]]}
+                            {:type :floor}]]
+                   :messages []}
             action [:walk :forward]
             expected-state {:board [[{:type :floor}
                                      {:type :warrior
-                                      :direction :east}]]}]
-
+                                      :direction :east}]]
+                            :messages ["You walk forward"]}]
         (is (= expected-state (play/take-warrior-action state action)))))
 
     (testing "can walk backward when open space"
       (let [state {:board [[{:type :floor}
                             {:type :warrior
-                             :direction :east}]]}
+                             :direction :east}]]
+                   :messages []}
             action [:walk :backward]
             expected-state {:board [[{:type :warrior
                                       :direction :east}
-                                     {:type :floor}]]}]
-
+                                     {:type :floor}]]
+                            :messages ["You walk backward"]}]
         (is (= expected-state (play/take-warrior-action state action)))))
 
     (testing "can walk forward when open space (and facing west)"
       (let [state {:board [[{:type :floor}
                             {:type :warrior
-                             :direction :west}]]}
+                             :direction :west}]]
+                   :messages []}
             action [:walk :forward]
             expected-state {:board [[{:type :warrior
                                       :direction :west}
-                                     {:type :floor}]]}]
-
+                                     {:type :floor}]]
+                            :messages ["You walk forward"]}]
         (is (= expected-state (play/take-warrior-action state action)))))
-
 
     (testing "cannot walk forward when not open space"
       (let [state {:board [[{:type :warrior
                              :direction :east}
-                            {:type :wall}]]}
+                            {:type :wall}]]
+                   :messages []}
             action [:walk :forward]
             expected-state {:board [[{:type :warrior
                                       :direction :east}
-                                     {:type :wall}]]}]
-
-        (is (= expected-state (play/take-warrior-action state action))))
-
-      ; TODO have a message appended
-      ))
+                                     {:type :wall}]]
+                            :messages ["You walk forward"
+                                       "You bump into a wall"]}]
+        (is (= expected-state (play/take-warrior-action state action))))))
 
   (testing "pivot"
     (testing "turns warrior west->east"

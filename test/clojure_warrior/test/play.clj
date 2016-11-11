@@ -225,34 +225,45 @@
         (let [state {:board [[{:type :warrior
                                :points 0.0
                                :direction :east}
-                              {:type :captive}]]}
+                              {:type :captive}]]
+                     :messages []}
               action [:rescue :forward]
               expected-state {:board [[{:type :warrior
                                         :points 20.0
                                         :direction :east}
-                                       {:type :floor}]]}]
+                                       {:type :floor}]]
+                              :messages ["You rescue forward"
+                                         "You unbind and rescue a captive"
+                                         "You earn 20 points"]}]
           (is (= expected-state (play/take-warrior-action state action)))))
 
       (testing "can rescue backward"
         (let [state {:board [[{:type :warrior
                                :points 0.0
                                :direction :west}
-                              {:type :captive}]]}
+                              {:type :captive}]]
+                     :messages []}
               action [:rescue :backward]
               expected-state {:board [[{:type :warrior
                                         :points 20.0
                                         :direction :west}
-                                       {:type :floor}]]}]
+                                       {:type :floor}]]
+                              :messages ["You rescue backward"
+                                         "You unbind and rescue a captive"
+                                         "You earn 20 points"]}]
           (is (= expected-state (play/take-warrior-action state action))))))
 
     (testing "if not a captive, no effect"
       (let [state {:board [[{:type :warrior
                              :points 0.0
                              :direction :east}
-                            {:type :whatever}]]}
+                            {:type :whatever}]]
+                   :messages []}
             action [:rescue :forward]
             expected-state {:board [[{:type :warrior
                                       :points 0.0
                                       :direction :east}
-                                     {:type :whatever}]]}]
+                                     {:type :whatever}]]
+                            :messages ["You rescue forward"
+                                       "There is no captive to rescue"]}]
         (is (= expected-state (play/take-warrior-action state action)))))))

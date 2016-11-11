@@ -1,5 +1,8 @@
 (ns clojure-warrior.play)
 
+(defn add-message [state message]
+  (update state :messages conj message))
+
 (defn get-units
   "Returns list of units, with their positions"
   [board]
@@ -115,12 +118,16 @@
   [state [_ direction]]
   (let [warrior (get-warrior (state :board))
         target (first-unit-in-range (state :board) warrior direction 1)]
-    (if (and target (= :captive (:type target)))
-      (-> state
-          (update-in [:board (last (warrior :position))
-                      (first (warrior :position)) :points]
-                     (fn [points]
-                       (+ points 20)))
-          (assoc-in [:board (last (target :position)) (first (target :position))]
-            {:type :floor}))
-      state)))
+    (as-> state $
+      (add-message $ (str "You rescue " (name direction)))
+      (if (and target (= :captive (:type target)))
+        (-> $
+            (add-message "You unbind and rescue a captive")
+            (assoc-in [:board (last (target :position)) (first (target :position))]
+              {:type :floor})
+            (update-in [:board (last (warrior :position))
+                        (first (warrior :position)) :points]
+                       (fn [points]
+                         (+ points 20)))
+            (add-message "You earn 20 points"))
+        (add-message $ "There is no captive to rescue")))))

@@ -3,6 +3,7 @@
 (def reference
   {:archer
    {:type :archer
+    :enemy? true
     :define-char \a
     :display-char \a
     :abilities #{:shoot :look}
@@ -15,12 +16,14 @@
 
    :captive
    {:type :captive
+    :enemy? true
     :max-health 1.0
     :define-char \C
     :display-char \C}
 
    :sludge
    {:type :sludge
+    :enemy? true
     :define-char \s
     :display-char \s
     :abilities #{:attack :feel}
@@ -32,6 +35,7 @@
 
    :thick-sludge
    {:type :thick-sludge
+    :enemy? true
     :define-char \S
     :display-char \S
     :abilities #{:attack :feel}
@@ -43,6 +47,7 @@
 
    :wizard
    {:type :wizard
+    :enemy? true
     :define-char \w
     :display-char \w
     :abilities #{:shoot :look}

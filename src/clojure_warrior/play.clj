@@ -105,15 +105,20 @@
   [state [_ direction]]
   (let [warrior (get-warrior (state :board))
         target-position (action-target-position warrior direction)
-        can-attack? (unit-at-position (state :board) target-position)
+        target (unit-at-position (state :board) target-position)
         power-multiplier (case direction
                            :forward 1.0
-                           :backward 0.5)]
-    (if can-attack?
-      (update-at state target-position :health
-                 (fn [health]
-                   (max (- health (* (warrior :attack-power) power-multiplier)))))
-      state)))
+                           :backward 0.5)
+        attack-power (* (warrior :attack-power) power-multiplier)]
+    (as-> state $
+      (add-message $ (str "You attack " (name direction)))
+      (if target
+        (-> $
+            (add-message (str "You hit a " (name (:type target)) ", dealing " attack-power " damage"))
+            (update-at target-position :health
+                       (fn [health]
+                         (max 0 (- health attack-power)))))
+        (add-message $ "You hit nothing")))))
 
 (defmethod take-warrior-action :shoot
   [state [_ direction]]

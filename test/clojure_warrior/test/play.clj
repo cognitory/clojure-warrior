@@ -135,13 +135,16 @@
                              :attack-power 5.0
                              :direction :east}
                             {:type :whatever
-                             :health 10.0}]]}
+                             :health 10.0}]]
+                   :messages []}
             action [:attack :forward]
             expected-state {:board [[{:type :warrior
                                       :attack-power 5.0
                                       :direction :east}
                                      {:type :whatever
-                                      :health 5.0}]]}]
+                                      :health 5.0}]]
+                            :messages ["You attack forward"
+                                       "You hit a whatever, dealing 5.0 damage"]}]
         (is (= expected-state (play/take-warrior-action state action)))))
 
     (testing "can attack backward (at 50% reduced strength)"
@@ -149,25 +152,31 @@
                              :attack-power 5.0
                              :direction :west}
                             {:type :whatever
-                             :health 10.0}]]}
+                             :health 10.0}]]
+                   :messages []}
             action [:attack :backward]
             expected-state {:board [[{:type :warrior
                                       :attack-power 5.0
                                       :direction :west}
                                      {:type :whatever
-                                      :health 7.5}]]}]
+                                      :health 7.5}]]
+                            :messages ["You attack backward"
+                                       "You hit a whatever, dealing 2.5 damage"]}]
         (is (= expected-state (play/take-warrior-action state action)))))
 
     (testing "attacking object without health has no effect"
       (let [state {:board [[{:type :warrior
                              :attack-power 5.0
                              :direction :west}
-                            {:type :whatever}]]}
+                            {:type :whatever}]]
+                   :messages []}
             action [:attack :forward]
             expected-state {:board [[{:type :warrior
                                       :attack-power 5.0
                                       :direction :west}
-                                     {:type :whatever}]]}]
+                                     {:type :whatever}]]
+                            :messages ["You attack forward"
+                                       "You hit nothing"]}]
         (is (= expected-state (play/take-warrior-action state action))))))
 
   (testing "shoot (damages first unit within 3 units ahead)"

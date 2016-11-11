@@ -1,61 +1,63 @@
-(ns clojure-warrior.units)
+(ns clojure-warrior.units
+  (:require
+    [clojure-warrior.helpers :refer [look feel]]))
+
+(defn melee-unit-logic [state]
+  (cond
+    (= :warrior (:type (feel state :forward)))
+    [:attack :forward]
+    (= :warrior (:type (feel state :backward)))
+    [:attack :backward]))
+
+(defn ranged-unit-logic [state]
+  (cond
+    (= :warrior (:type (look state :forward)))
+    [:shoot :forward]
+    (= :warrior (:type (look state :backward)))
+    [:shoot :backward]))
 
 (def reference
-  {:archer
+  {:captive
+   {:type :captive
+    :max-health 1.0
+    :define-char \C
+    :display-char \C}
+
+   :archer
    {:type :archer
     :enemy? true
     :define-char \a
     :display-char \a
-    :abilities #{:shoot :look}
     :shoot-power 3.0
     :max-health 7.0
-
-    :play (fn []
-            ; look in each direction, shoot if player
-            )}
-
-   :captive
-   {:type :captive
-    :enemy? true
-    :max-health 1.0
-    :define-char \C
-    :display-char \C}
+    :logic ranged-unit-logic}
 
    :sludge
    {:type :sludge
     :enemy? true
     :define-char \s
     :display-char \s
-    :abilities #{:attack :feel}
     :attack-power 3.0
     :max-health 12.0
-    :play (fn []
-            ; feel in each direction, shoot if player
-            )}
+    :logic melee-unit-logic}
 
    :thick-sludge
    {:type :thick-sludge
     :enemy? true
     :define-char \S
     :display-char \S
-    :abilities #{:attack :feel}
     :attack-power 3.0
     :max-health 24.0
-    :play (fn []
-            ; feel in each direction, shoot if player
-            )}
+    :logic melee-unit-logic}
 
    :wizard
    {:type :wizard
     :enemy? true
     :define-char \w
     :display-char \w
-    :abilities #{:shoot :look}
     :shoot-power 11.0
     :max-health 3.0
-    :play (fn []
-            ; look in each direction, shoot if player
-            )}
+    :logic ranged-unit-logic}
 
    :warrior
    {:type :warrior

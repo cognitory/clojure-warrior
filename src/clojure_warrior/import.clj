@@ -19,16 +19,17 @@
         (if direction (assoc m :direction direction) m)
         (if health (assoc m :health health) m)))))
 
+(defn extract-board [board-description]
+  (->> board-description
+       (map (fn [row]
+              (concat [:-] row [:-])))
+       (map (fn [row]
+              (vec (map (fn [space]
+                          (extract-unit space))
+                        row))))
+       vec))
+
 (defn generate-initial-level-state
   [level-description]
   {:messages ["You enter the tower"]
-   :board
-   (->> level-description
-        :board
-        (map (fn [row]
-               (concat [:-] row [:-])))
-        (map (fn [row]
-               (vec (map (fn [space]
-                      (extract-unit space))
-                    row))))
-        vec)})
+   :board (extract-board (level-description :board))})

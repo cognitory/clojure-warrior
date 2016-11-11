@@ -1,6 +1,9 @@
 (ns clojure-warrior.play
   (:require
-    [clojure-warrior.import :as import]))
+    [clojure-warrior.import :as import]
+    [clojure-warrior.state :refer [get-units
+                                   get-warrior
+                                   unit-at-position]]))
 
 (defn add-message [state message]
   (update state :messages conj message))
@@ -10,28 +13,6 @@
 
 (defn update-at [state position k fn]
   (update-in state [:board (last position) (first position) k] fn))
-
-(defn get-units
-  "Returns list of units, with their positions"
-  [board]
-  (->> board
-       (map-indexed
-         (fn [y row]
-           (map-indexed (fn [x unit]
-                          (assoc unit :position [x y])) row)))
-       flatten))
-
-(defn get-warrior [board]
-  (->> board
-       get-units
-       (filter (fn [u] (= :warrior (u :type))))
-       first))
-
-(defn unit-at-position [board position]
-  (->> board
-       get-units
-       (filter (fn [u] (= position (u :position))))
-       first))
 
 (defn action-target-position [warrior action-direction]
   (case [(warrior :direction) action-direction]

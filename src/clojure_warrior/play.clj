@@ -124,11 +124,16 @@
     (as-> state $
       (add-message $ (str "You attack " (name direction)))
       (if target
-        (-> $
-            (add-message (str "You hit a " (name (:type target)) ", dealing " attack-power " damage"))
-            (update-at target-position :health
-                       (fn [health]
-                         (max 0 (- health attack-power)))))
+        (let [damage (min attack-power (target :health))
+              target-new-health (max 0 (- (target :health) damage))]
+          (-> $
+              (add-message (str "A " (name (:type target)) " takes " damage " damage, "
+                                (if (< 0 target-new-health)
+                                  (str "and has " target-new-health " health left")
+                                  (str "and dies"))))
+              (update-at target-position :health
+                         (fn [health]
+                           (max 0 (- health attack-power))))))
         (add-message $ "You hit nothing")))))
 
 (defmethod take-warrior-action :shoot

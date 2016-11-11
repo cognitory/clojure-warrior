@@ -158,7 +158,24 @@
                                      {:type :whatever
                                       :health 5.0}]]
                             :messages ["You attack forward"
-                                       "You hit a whatever, dealing 5.0 damage"]}]
+                                       "A whatever takes 5.0 damage, and has 5.0 health left"]}]
+        (is (= expected-state (play/take-warrior-action state action)))))
+
+    (testing "can kill a unit"
+      (let [state {:board [[{:type :warrior
+                             :attack-power 5.0
+                             :direction :east}
+                            {:type :whatever
+                             :health 5.0}]]
+                   :messages []}
+            action [:attack :forward]
+            expected-state {:board [[{:type :warrior
+                                      :attack-power 5.0
+                                      :direction :east}
+                                     {:type :whatever
+                                      :health 0.0}]]
+                            :messages ["You attack forward"
+                                       "A whatever takes 5.0 damage, and dies"]}]
         (is (= expected-state (play/take-warrior-action state action)))))
 
     (testing "can attack backward (at 50% reduced strength)"
@@ -175,7 +192,7 @@
                                      {:type :whatever
                                       :health 7.5}]]
                             :messages ["You attack backward"
-                                       "You hit a whatever, dealing 2.5 damage"]}]
+                                       "A whatever takes 2.5 damage, and has 7.5 health left"]}]
         (is (= expected-state (play/take-warrior-action state action)))))
 
     (testing "attacking object without health has no effect"

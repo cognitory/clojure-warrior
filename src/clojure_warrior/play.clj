@@ -24,6 +24,13 @@
        (filter (fn [u] (= position (u :position))))
        first))
 
+(defn action-target-position [warrior action-direction]
+  (case [(warrior :direction) action-direction]
+    [:east :forward] (update-in (warrior :position) [0] inc)
+    [:west :backward] (update-in (warrior :position) [0] inc)
+    [:west :forward] (update-in (warrior :position) [0] dec)
+    [:east :backward] (update-in (warrior :position) [0] dec)))
+
 (defmulti take-warrior-action
   "Returns new state after performing warrior action"
   (fn [state action] (first action)))
@@ -31,11 +38,7 @@
 (defmethod take-warrior-action :walk
   [state [_ direction]]
   (let [warrior (get-warrior (state :board))
-        target-position (case [(warrior :direction) direction]
-                          [:east :forward] (update-in (warrior :position) [0] inc)
-                          [:west :backward] (update-in (warrior :position) [0] inc)
-                          [:west :forward] (update-in (warrior :position) [0] dec)
-                          [:east :backward] (update-in (warrior :position) [0] dec))
+        target-position (action-target-position warrior direction)
         can-walk? (= :floor (:type (unit-at-position (state :board) target-position)))]
 
     (update state :board
@@ -63,4 +66,19 @@
         max-health (:max-health (units/reference :warrior))]
     (update-in state [:board (first p) (last p) :health]
                (fn [health]
-                 (min max-health (int (+ health (* max-health 0.1))))))))
+                 (min max-health (+ health (* max-health 0.1)))))))
+
+(defmethod take-warrior-action :attack
+  [state [_ direction]]
+  (let [warrior (get-warrior (state :board))
+        target-position (action-target-position warrior direction)
+        p (reverse target-position)
+        can-attack? (unit-at-position (state :board) target-position)
+        power-multiplier (case direction
+                           :forward 1.0
+                           :backward 0.5)]
+    (if can-attack?
+      (update-in state [:board (first p) (last p) :health]
+                 (fn [health]
+                   (- health (* (warrior :attack-power) power-multiplier))))
+      state)))

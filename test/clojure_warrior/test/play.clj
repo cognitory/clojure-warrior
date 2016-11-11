@@ -85,16 +85,57 @@
   (testing "rest"
     (testing "get back 10% of max health"
       (let [state {:board [[{:type :warrior
-                             :health 5}]]}
+                             :health 5.0}]]}
             action [:rest]
             expected-state {:board [[{:type :warrior
-                                      :health 7}]]}]
+                                      :health 7.0}]]}]
         (is (= expected-state (play/take-warrior-action state action)))))
 
     (testing "does not get more than max-health"
       (let [state {:board [[{:type :warrior
-                             :health 19}]]}
+                             :health 19.0}]]}
             action [:rest]
             expected-state {:board [[{:type :warrior
-                                      :health 20}]]}]
+                                      :health 20.0}]]}]
+        (is (= expected-state (play/take-warrior-action state action))))))
+
+  (testing "attack"
+    (testing "can attack forward"
+      (let [state {:board [[{:type :warrior
+                             :attack-power 5.0
+                             :direction :east}
+                            {:type :whatever
+                             :health 10.0}]]}
+            action [:attack :forward]
+            expected-state {:board [[{:type :warrior
+                                      :attack-power 5.0
+                                      :direction :east}
+                                     {:type :whatever
+                                      :health 5.0}]]}]
+        (is (= expected-state (play/take-warrior-action state action)))))
+
+    (testing "can attack backward (at 50% reduced strength)"
+      (let [state {:board [[{:type :warrior
+                             :attack-power 5.0
+                             :direction :west}
+                            {:type :whatever
+                             :health 10.0}]]}
+            action [:attack :backward]
+            expected-state {:board [[{:type :warrior
+                                      :attack-power 5.0
+                                      :direction :west}
+                                     {:type :whatever
+                                      :health 7.5}]]}]
+        (is (= expected-state (play/take-warrior-action state action)))))
+
+    (testing "attacking object without health has no effect"
+      (let [state {:board [[{:type :warrior
+                             :attack-power 5.0
+                             :direction :west}
+                            {:type :whatever}]]}
+            action [:attack :forward]
+            expected-state {:board [[{:type :warrior
+                                      :attack-power 5.0
+                                      :direction :west}
+                                     {:type :whatever}]]}]
         (is (= expected-state (play/take-warrior-action state action)))))))

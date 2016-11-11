@@ -6,8 +6,8 @@
     :define-char \a
     :display-char \a
     :abilities #{:shoot :look}
-    :shoot-power 3
-    :max-health 7
+    :shoot-power 3.0
+    :max-health 7.0
 
     :play (fn []
             ; look in each direction, shoot if player
@@ -15,7 +15,7 @@
 
    :captive
    {:type :captive
-    :max-health 1
+    :max-health 1.0
     :define-char \C
     :display-char \C}
 
@@ -24,8 +24,8 @@
     :define-char \s
     :display-char \s
     :abilities #{:attack :feel}
-    :attack-power 3
-    :max-health 12
+    :attack-power 3.0
+    :max-health 12.0
     :play (fn []
             ; feel in each direction, shoot if player
             )}
@@ -35,8 +35,8 @@
     :define-char \S
     :display-char \S
     :abilities #{:attack :feel}
-    :attack-power 3
-    :max-health 24
+    :attack-power 3.0
+    :max-health 24.0
     :play (fn []
             ; feel in each direction, shoot if player
             )}
@@ -46,8 +46,8 @@
     :define-char \w
     :display-char \w
     :abilities #{:shoot :look}
-    :shoot-power 11
-    :max-health 3
+    :shoot-power 11.0
+    :max-health 3.0
     :play (fn []
             ; look in each direction, shoot if player
             )}
@@ -56,9 +56,9 @@
    {:type :warrior
     :define-char \*
     :display-char \@
-    :max-health 20
-    :attack-power 5
-    :shoot-power 3}
+    :max-health 20.0
+    :attack-power 5.0
+    :shoot-power 3.0}
 
    :wall
    {:type :wall

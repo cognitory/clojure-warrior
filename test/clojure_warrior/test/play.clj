@@ -93,21 +93,40 @@
     (testing "get back 10% of max health"
       (let [state {:board [[{:type :warrior
                              :max-health 20.0
-                             :health 5.0}]]}
+                             :health 5.0}]]
+                   :messages []}
             action [:rest]
             expected-state {:board [[{:type :warrior
                                       :max-health 20.0
-                                      :health 7.0}]]}]
+                                      :health 7.0}]]
+                            :messages ["You rest"
+                                       "You receive 2.0 health from resting, up to 7.0 health"]}]
         (is (= expected-state (play/take-warrior-action state action)))))
 
     (testing "does not get more than max-health"
       (let [state {:board [[{:type :warrior
                              :max-health 20.0
-                             :health 19.0}]]}
+                             :health 19.0}]]
+                   :messages []}
             action [:rest]
             expected-state {:board [[{:type :warrior
                                       :max-health 20.0
-                                      :health 20.0}]]}]
+                                      :health 20.0}]]
+                            :messages ["You rest"
+                                       "You receive 1.0 health from resting, up to 20.0 health"]}]
+        (is (= expected-state (play/take-warrior-action state action)))))
+
+    (testing "does not heal at max-health"
+      (let [state {:board [[{:type :warrior
+                             :max-health 20.0
+                             :health 20.0}]]
+                   :messages []}
+            action [:rest]
+            expected-state {:board [[{:type :warrior
+                                      :max-health 20.0
+                                      :health 20.0}]]
+                            :messages ["You rest"
+                                       "You are already fit as a fiddle"]}]
         (is (= expected-state (play/take-warrior-action state action))))))
 
   (testing "attack"

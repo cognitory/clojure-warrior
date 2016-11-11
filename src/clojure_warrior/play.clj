@@ -90,10 +90,16 @@
 (defmethod take-warrior-action :rest
   [state _]
   (let [warrior (get-warrior (state :board))
-        max-health (:max-health warrior)]
-    (update-at state (warrior :position) :health
-               (fn [health]
-                 (min max-health (+ health (* max-health 0.1)))))))
+        max-health (:max-health warrior)
+        health (:health warrior)
+        new-health (min max-health (+ health (* max-health 0.1)))
+        health-delta (- new-health health)]
+    (as-> state $
+        (add-message $ "You rest")
+        (if (> health-delta 0)
+          (add-message $ (str "You receive " health-delta " health from resting, up to " new-health " health"))
+          (add-message $ (str "You are already fit as a fiddle")))
+        (update-at $ (warrior :position) :health (fn [health] new-health)))))
 
 (defmethod take-warrior-action :attack
   [state [_ direction]]

@@ -88,4 +88,21 @@
             action [:pivot]
             expected-state {:board [[{:type :warrior
                                       :direction :east}]]}]
+        (is (= expected-state (play/take-warrior-action state action))))))
+
+  (testing "rest"
+    (testing "get back 10% of max health"
+      (let [state {:board [[{:type :warrior
+                             :health 5}]]}
+            action [:rest]
+            expected-state {:board [[{:type :warrior
+                                      :health 7}]]}]
+        (is (= expected-state (play/take-warrior-action state action)))))
+
+    (testing "does not get more than max-health"
+      (let [state {:board [[{:type :warrior
+                             :health 19}]]}
+            action [:rest]
+            expected-state {:board [[{:type :warrior
+                                      :health 20}]]}]
         (is (= expected-state (play/take-warrior-action state action)))))))

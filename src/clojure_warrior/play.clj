@@ -167,14 +167,17 @@
             (add-message "You earn 20 points"))
         (add-message $ "There is no captive to rescue")))))
 
-
-(defn get-public-state [state]
-  ; TODO
-  )
-
 (defn map-units [f board]
   (mapv (fn [row]
           (mapv f row)) board))
+
+(defn get-public-unit [unit]
+  (select-keys unit [:type :enemy? :health :direction]))
+
+(defn get-public-state [state]
+  (->> state
+       :board
+       (map-units get-public-unit)))
 
 (defn remove-dead-units [board]
   (map-units (fn [unit]

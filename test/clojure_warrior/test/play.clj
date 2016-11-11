@@ -366,3 +366,7 @@
                "You walk up the stairs"]]
              (map :messages (play/start-level level user-code)))))))
 
+(deftest take-env-actions
+  (testing "removes dead units"
+    (is (= {:board [[{:type :floor} {:health 10} {:type :wall}]]}
+           (play/take-env-actions {:board [[{:health 0} {:health 10} {:type :wall}]]})))))

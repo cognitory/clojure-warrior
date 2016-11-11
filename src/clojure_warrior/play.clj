@@ -167,9 +167,19 @@
   ; TODO
   )
 
+(defn map-units [f board]
+  (mapv (fn [row]
+          (mapv f row)) board))
+
 (defn take-env-actions [state]
-  ; TODO
-  state)
+  (update state :board (fn [board]
+                         (map-units (fn [unit]
+                                      (if (and
+                                            (contains? unit :health)
+                                            (>= 0 (unit :health)))
+                                        {:type :floor}
+                                        unit))
+                                    board))))
 
 (defn take-npc-actions [state]
   ; TODO

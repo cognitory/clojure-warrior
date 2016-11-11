@@ -1,6 +1,4 @@
-(ns clojure-warrior.play
-  (:require
-    [clojure-warrior.units :as units]))
+(ns clojure-warrior.play)
 
 (defn get-units
   "Returns list of units, with their positions"
@@ -63,7 +61,7 @@
   [state _]
   (let [warrior (get-warrior (state :board))
         p (reverse (warrior :position))
-        max-health (:max-health (units/reference :warrior))]
+        max-health (:max-health warrior)]
     (update-in state [:board (first p) (last p) :health]
                (fn [health]
                  (min max-health (+ health (* max-health 0.1)))))))

@@ -85,17 +85,21 @@
   (testing "rest"
     (testing "get back 10% of max health"
       (let [state {:board [[{:type :warrior
+                             :max-health 20.0
                              :health 5.0}]]}
             action [:rest]
             expected-state {:board [[{:type :warrior
+                                      :max-health 20.0
                                       :health 7.0}]]}]
         (is (= expected-state (play/take-warrior-action state action)))))
 
     (testing "does not get more than max-health"
       (let [state {:board [[{:type :warrior
+                             :max-health 20.0
                              :health 19.0}]]}
             action [:rest]
             expected-state {:board [[{:type :warrior
+                                      :max-health 20.0
                                       :health 20.0}]]}]
         (is (= expected-state (play/take-warrior-action state action))))))
 

@@ -58,7 +58,6 @@
   (let [warrior (get-warrior (state :board))
         target-position (action-target-position warrior direction)
         can-walk? (= :floor (:type (unit-at-position (state :board) target-position)))]
-
     (update state :board
               (fn [board]
                 (if can-walk?
@@ -69,9 +68,9 @@
 
 (defmethod take-warrior-action :pivot
   [state _]
-  (let [warrior (get-warrior (state :board))
-        p (reverse (warrior :position))]
-    (update-in state [:board (first p) (last p) :direction]
+  (let [warrior (get-warrior (state :board))]
+    (update-in state [:board (last (warrior :position))
+                      (first (warrior :position)) :direction]
                (fn [d]
                  (case d
                    :east :west
@@ -80,9 +79,9 @@
 (defmethod take-warrior-action :rest
   [state _]
   (let [warrior (get-warrior (state :board))
-        p (reverse (warrior :position))
         max-health (:max-health warrior)]
-    (update-in state [:board (first p) (last p) :health]
+    (update-in state [:board (last (warrior :position))
+                      (first (warrior :position)) :health]
                (fn [health]
                  (min max-health (+ health (* max-health 0.1)))))))
 
@@ -90,13 +89,13 @@
   [state [_ direction]]
   (let [warrior (get-warrior (state :board))
         target-position (action-target-position warrior direction)
-        p (reverse target-position)
         can-attack? (unit-at-position (state :board) target-position)
         power-multiplier (case direction
                            :forward 1.0
                            :backward 0.5)]
     (if can-attack?
-      (update-in state [:board (first p) (last p) :health]
+      (update-in state [:board (last target-position)
+                        (first target-position) :health]
                  (fn [health]
                    (max (- health (* (warrior :attack-power) power-multiplier)))))
       state)))
@@ -106,10 +105,10 @@
   (let [warrior (get-warrior (state :board))
         target (first-unit-in-range (state :board) warrior direction 3)]
     (if target
-      (let [p (reverse (target :position))]
-        (update-in state [:board (first p) (last p) :health]
-                   (fn [health]
-                     (max 0 (- health (warrior :shoot-power))))))
+      (update-in state [:board (last (target :position))
+                        (first (target :position)) :health]
+                 (fn [health]
+                   (max 0 (- health (warrior :shoot-power)))))
       state)))
 
 (defmethod take-warrior-action :rescue

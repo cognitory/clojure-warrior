@@ -19,13 +19,11 @@
   (testing "walk"
     (testing "can walk forward when open space"
       (let [state {:board [[{:type :warrior
-                             :health 20
                              :direction :east}
                             {:type :floor}]]}
             action [:walk :forward]
             expected-state {:board [[{:type :floor}
                                      {:type :warrior
-                                      :health 20
                                       :direction :east}]]}]
 
         (is (= expected-state (play/take-warrior-action state action)))))
@@ -33,11 +31,9 @@
     (testing "can walk backward when open space"
       (let [state {:board [[{:type :floor}
                             {:type :warrior
-                             :health 20
                              :direction :east}]]}
             action [:walk :backward]
             expected-state {:board [[{:type :warrior
-                                      :health 20
                                       :direction :east}
                                      {:type :floor}]]}]
 
@@ -46,11 +42,9 @@
     (testing "can walk forward when open space (and facing west)"
       (let [state {:board [[{:type :floor}
                             {:type :warrior
-                             :health 20
                              :direction :west}]]}
             action [:walk :forward]
             expected-state {:board [[{:type :warrior
-                                      :health 20
                                       :direction :west}
                                      {:type :floor}]]}]
 
@@ -59,12 +53,10 @@
 
     (testing "cannot walk forward when not open space"
       (let [state {:board [[{:type :warrior
-                             :health 20
                              :direction :east}
                             {:type :wall}]]}
             action [:walk :forward]
             expected-state {:board [[{:type :warrior
-                                      :health 20
                                       :direction :east}
                                      {:type :wall}]]}]
 

@@ -12,26 +12,26 @@
                  {:type :stairs}
                  {:type :captive
                   :direction :east
-                  :health 1}
+                  :health 1.0}
                  {:type :archer
                   :direction :east
-                  :health 7}
+                  :health 7.0}
                  {:type :floor}
                  {:type :floor}
                  {:type :warrior
-                  :health 20
+                  :health 20.0
                   :direction :east}
                  {:type :floor}
                  {:type :thick-sludge
                   :direction :west
-                  :health 24}
+                  :health 24.0}
                  {:type :floor}
                  {:type :wizard
                   :direction :west
-                  :health 3}
+                  :health 3.0}
                  {:type :captive
                   :direction :west
-                  :health 1}
+                  :health 1.0}
                  {:type :wall}]]}]
       (is (= out
              (w/generate-initial-level-state in))))))
@@ -44,26 +44,26 @@
                 {:type :stairs}
                 {:type :captive
                  :direction :east
-                 :health 1}
+                 :health 1.0}
                 {:type :archer
                  :direction :east
-                 :health 7}
+                 :health 7.0}
                 {:type :floor}
                 {:type :floor}
                 {:type :warrior
-                 :health 20
+                 :health 20.0
                  :direction :east}
                 {:type :floor}
                 {:type :thick-sludge
                  :direction :west
-                 :health 24}
+                 :health 24.0}
                 {:type :floor}
                 {:type :wizard
                  :direction :west
-                 :health 3}
+                 :health 3.0}
                 {:type :captive
                  :direction :west
-                 :health 1}
+                 :health 1.0}
                 {:type :wall}]]}
           out "-------------\n|>Ca  @ S wC|\n-------------"]
       (is (= out (w/generate-display in))))))

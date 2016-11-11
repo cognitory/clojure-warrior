@@ -69,18 +69,24 @@
   (testing "pivot"
     (testing "turns warrior west->east"
       (let [state {:board [[{:type :warrior
-                             :direction :east}]]}
+                             :direction :east}]]
+                   :messages []}
             action [:pivot]
             expected-state {:board [[{:type :warrior
-                                      :direction :west}]]}]
+                                      :direction :west}]]
+                            :messages ["You pivot"
+                                       "You are now facing west"]}]
         (is (= expected-state (play/take-warrior-action state action)))))
 
     (testing "turns warrior east->west"
       (let [state {:board [[{:type :warrior
-                             :direction :west}]]}
+                             :direction :west}]]
+                   :messages []}
             action [:pivot]
             expected-state {:board [[{:type :warrior
-                                      :direction :east}]]}]
+                                      :direction :east}]]
+                            :messages ["You pivot"
+                                       "You are now facing east"]}]
         (is (= expected-state (play/take-warrior-action state action))))))
 
   (testing "rest"

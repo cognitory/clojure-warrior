@@ -78,12 +78,14 @@
 
 (defmethod take-warrior-action :pivot
   [state _]
-  (let [warrior (get-warrior (state :board))]
-    (update-at state (warrior :position) :direction
-               (fn [d]
-                 (case d
-                   :east :west
-                   :west :east)))))
+  (let [warrior (get-warrior (state :board))
+        new-direction (case (warrior :direction)
+                        :east :west
+                        :west :east)]
+    (-> state
+        (add-message "You pivot")
+        (add-message (str "You are now facing " (name new-direction)))
+        (update-at (warrior :position) :direction (fn [_] new-direction)))))
 
 (defmethod take-warrior-action :rest
   [state _]

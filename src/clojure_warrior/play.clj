@@ -195,11 +195,12 @@
 (defn play-turn [init-state users-code]
   (let [warrior-action (users-code (get-public-state init-state))
         ; TODO validate warrior-action
-        post-user-state (take-warrior-action init-state warrior-action)
-        post-env-state (take-env-actions post-user-state)
-        post-npc-state (take-npc-actions post-env-state)
-        final-state (take-env-actions post-npc-state)]
-    final-state))
+        ]
+    (-> init-state
+        (take-warrior-action warrior-action)
+        take-env-actions
+        take-npc-actions
+        take-env-actions)))
 
 (defn warrior-at-stairs? [state]
   (->> (state :board)

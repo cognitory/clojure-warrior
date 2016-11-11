@@ -379,6 +379,7 @@
 (deftest get-public-unit
   (let [private-unit {:type :archer
                       :enemy? true
+                      :ranged? true
                       :define-char \a
                       :display-char \a
                       :abilities #{:shoot :look}
@@ -386,7 +387,7 @@
                       :max-health 7.0
                       :health 10.0
                       :direction :east}]
-    (= {:type :enemy? :health :direction}
+    (= #{:type :enemy? :ranged? :health :direction}
        (set (keys (play/get-public-unit private-unit))))))
 
 (deftest get-public-state

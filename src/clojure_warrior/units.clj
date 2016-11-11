@@ -26,6 +26,7 @@
    :archer
    {:type :archer
     :enemy? true
+    :ranged? true
     :define-char \a
     :display-char \a
     :shoot-power 3.0
@@ -35,6 +36,7 @@
    :sludge
    {:type :sludge
     :enemy? true
+    :melee? true
     :define-char \s
     :display-char \s
     :attack-power 3.0
@@ -44,6 +46,7 @@
    :thick-sludge
    {:type :thick-sludge
     :enemy? true
+    :melee? true
     :define-char \S
     :display-char \S
     :attack-power 3.0
@@ -53,6 +56,7 @@
    :wizard
    {:type :wizard
     :enemy? true
+    :ranged? true
     :define-char \w
     :display-char \w
     :shoot-power 11.0
@@ -61,6 +65,8 @@
 
    :warrior
    {:type :warrior
+    :ranged? true
+    :melee? true
     :define-char \*
     :display-char \@
     :max-health 20.0
@@ -69,16 +75,19 @@
 
    :wall
    {:type :wall
+    :environment? true
     :define-char \-
     :display-char \|}
 
    :stairs
    {:type :stairs
+    :environment? true
     :define-char \_
     :display-char \>}
 
    :floor
    {:type :floor
+    :environment? true
     :define-char nil
     :display-char " "}})
 

@@ -3,7 +3,9 @@
     [clojure-warrior.import :as import]
     [clojure-warrior.state :refer [get-units
                                    get-warrior
-                                   unit-at-position]]))
+                                   unit-at-position
+                                   first-unit-in-range
+                                   action-target-position]]))
 
 (defn add-message [state message]
   (update state :messages conj message))
@@ -13,33 +15,6 @@
 
 (defn update-at [state position k fn]
   (update-in state [:board (last position) (first position) k] fn))
-
-(defn action-target-position [warrior action-direction]
-  (case [(warrior :direction) action-direction]
-    [:east :forward] (update-in (warrior :position) [0] inc)
-    [:west :backward] (update-in (warrior :position) [0] inc)
-    [:west :forward] (update-in (warrior :position) [0] dec)
-    [:east :backward] (update-in (warrior :position) [0] dec)))
-
-(defn first-unit-in-range [board unit action-direction action-range]
-  (let [net-direction (case [(unit :direction) action-direction]
-                        [:east :forward] :east
-                        [:east :backward] :west
-                        [:west :forward] :west
-                        [:west :backward] :east)
-        maybe-reverse (case net-direction
-                        :east identity
-                        :west reverse)]
-    (->> board
-         get-units
-         maybe-reverse
-         (drop-while (fn [u]
-                       (not= (:type u) :warrior)))
-         (drop 1)
-         (take action-range)
-         (remove (fn [u]
-                   (= (:type u) :floor)))
-         first)))
 
 (defmulti take-warrior-action
   "Returns new state after performing warrior action"

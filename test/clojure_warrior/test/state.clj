@@ -9,6 +9,12 @@
             :position [2 0]}
            (state/get-warrior [[{} {} {:type :warrior}]])))))
 
+(deftest get-stairs
+  (testing "get-stairs"
+    (is (= {:type :stairs
+            :position [2 0]}
+           (state/get-stairs [[{} {} {:type :stairs}]])))))
+
 (deftest unit-at-position
   (testing "unit-at-position"
     (is (= {:type :warrior

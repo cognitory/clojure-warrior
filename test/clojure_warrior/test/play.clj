@@ -355,21 +355,41 @@
 
 (deftest start-level
   (testing "start-level"
-    (let [level {:board [[:*> nil nil :__]]}
+    (let [level {:id 1
+                 :board [[:*> nil nil :__]]}
           user-code (fn [state]
                       [:walk :forward])]
-      (is (= [["You enter the tower"]
-              ["You enter the tower"
+      (is (= [["You enter room 1"]
+              ["You enter room 1"
                "You walk forward"]
-              ["You enter the tower"
+              ["You enter room 1"
                "You walk forward"
                "You walk forward"]
-              ["You enter the tower"
+              ["You enter room 1"
                "You walk forward"
                "You walk forward"
                "You walk forward"
                "You walk up the stairs"]]
              (map :messages (play/start-level level user-code)))))))
+
+(deftest play-levels
+  (testing "play-levels"
+    (testing "win game"
+      (let [levels [{:id 1
+                     :board [[:*> :__]]}
+                    {:id 2
+                     :board [[:*> :__]]}]
+            user-code (fn [state]
+                        [:walk :forward])]
+        (is (= ["You enter the tower"
+                "You enter room 1"
+                "You walk forward"
+                "You walk up the stairs"
+                "You enter room 2"
+                "You walk forward"
+                "You walk up the stairs"
+                "You have reached the top of the tower"]
+               (last (map :messages (play/play-levels levels user-code)))))))))
 
 (deftest take-env-actions
   (testing "removes dead units"

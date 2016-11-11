@@ -177,3 +177,16 @@
 (defn start-level [level-definition users-code]
   (let [init-state [(import/generate-initial-level-state level-definition)]]
     (play-level init-state users-code)))
+
+(defn play-levels [level-definitions users-code]
+  (let [history (reduce
+                  (fn [memo ld]
+                    (concat memo
+                            (play-level
+                              [{:messages (conj (:messages (last memo))
+                                                (str "You enter room " (ld :id)))
+                                :board (import/extract-board (ld :board))}]
+                              users-code)))
+                  [{:messages ["You enter the tower"]}] level-definitions)]
+    (update-in (vec history) [(dec (count history)) :messages]
+                 conj "You have reached the top of the tower")))

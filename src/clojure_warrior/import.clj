@@ -31,5 +31,5 @@
 
 (defn generate-initial-level-state
   [level-description]
-  {:messages ["You enter the tower"]
+  {:messages [(str "You enter room " (level-description :id))]
    :board (extract-board (level-description :board))})

@@ -3,14 +3,9 @@
     [clojure-warrior.import :as import]
     [clojure-warrior.helpers :as helpers]
     [clojure-warrior.unit :refer [take-warrior-action]]
-    [clojure-warrior.state :refer [get-units
-                                   get-warrior
-                                   unit-at-position
-                                   first-unit-in-range
-                                   action-target-position
+    [clojure-warrior.state :refer [get-warrior
                                    add-message
-                                   assoc-at
-                                   update-at]]))
+                                   assoc-at]]))
 
 (defn map-units [f board]
   (mapv (fn [row]

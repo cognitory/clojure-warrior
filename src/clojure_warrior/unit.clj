@@ -1,9 +1,6 @@
 (ns clojure-warrior.unit
   (:require
-    [clojure-warrior.import :as import]
-    [clojure-warrior.helpers :as helpers]
-    [clojure-warrior.state :refer [get-units
-                                   get-warrior
+    [clojure-warrior.state :refer [get-warrior
                                    unit-at-position
                                    first-unit-in-range
                                    action-target-position

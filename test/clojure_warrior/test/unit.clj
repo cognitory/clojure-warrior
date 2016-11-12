@@ -214,7 +214,7 @@
                                        {:type :whatever
                                         :health 7.0}]]
                               :messages ["You shoot forward"
-                                         "You hit a whatever, dealing 3.0 damage"]}]
+                                         "A whatever takes 3.0 damage, and has 7.0 health left"]}]
           (is (= expected-state (unit/take-warrior-action state action)))))
 
       (testing "can shoot forward (range 3)"
@@ -235,7 +235,7 @@
                                        {:type :whatever
                                         :health 7.0}]]
                               :messages ["You shoot forward"
-                                         "You hit a whatever, dealing 3.0 damage"]}]
+                                         "A whatever takes 3.0 damage, and has 7.0 health left"]}]
           (is (= expected-state (unit/take-warrior-action state action)))))
 
       (testing "when nothing is in range, no effect"
@@ -271,7 +271,7 @@
                                        {:type :whatever
                                         :health 7.0}]]
                               :messages ["You shoot backward"
-                                         "You hit a whatever, dealing 3.0 damage"]}]
+                                         "A whatever takes 3.0 damage, and has 7.0 health left"]}]
           (is (= expected-state (unit/take-warrior-action state action)))))
 
       (testing "shooting object without health has no effect"

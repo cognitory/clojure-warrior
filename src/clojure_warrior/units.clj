@@ -21,6 +21,7 @@
 (def reference
   {:captive
    {:type :captive
+    :captive? true
     :max-health 1.0
     :define-char \C
     :display-char \C}
@@ -83,12 +84,14 @@
 
    :stairs
    {:type :stairs
+    :stairs? true
     :environment? true
     :define-char \_
     :display-char \>}
 
    :floor
    {:type :floor
+    :empty? true
     :environment? true
     :define-char nil
     :display-char " "}})

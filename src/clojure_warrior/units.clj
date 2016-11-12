@@ -3,14 +3,16 @@
     [clojure-warrior.helpers :refer [look feel]]))
 
 (defn melee-unit-logic [state]
-  (cond
+  [:attack]
+  #_(cond
     (= :warrior (:type (feel state :forward)))
     [:attack :forward]
     (= :warrior (:type (feel state :backward)))
     [:attack :backward]))
 
 (defn ranged-unit-logic [state]
-  (cond
+  [:shoot]
+  #_(cond
     (= :warrior (:type (look state :forward)))
     [:shoot :forward]
     (= :warrior (:type (look state :backward)))

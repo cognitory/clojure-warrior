@@ -1,6 +1,7 @@
 (ns clojure-warrior.play
   (:require
     [clojure-warrior.import :as import]
+    [clojure-warrior.helpers :as helpers]
     [clojure-warrior.state :refer [get-units
                                    get-warrior
                                    unit-at-position
@@ -135,31 +136,16 @@
        :board
        (map-units get-public-unit)))
 
-(defn remove-dead-units [board]
-  (map-units (fn [unit]
-               (if (and
-                     (contains? unit :health)
-                     (>= 0 (unit :health)))
-                 {:type :floor}
-                 unit))
-             board))
-
-(defn take-env-actions [state]
-  (update state :board remove-dead-units))
-
-(defn take-npc-actions [state]
-  ; TODO
-  state)
-
-(defn play-turn [init-state users-code]
-  (let [warrior-action (users-code (get-public-state init-state))
-        ; TODO validate warrior-action
-        ]
-    (-> init-state
-        (take-warrior-action warrior-action)
-        take-env-actions
-        take-npc-actions
-        take-env-actions)))
+(defn remove-dead-units [state]
+  (update state :board
+          (fn [board]
+            (map-units (fn [unit]
+                         (if (and
+                               (contains? unit :health)
+                               (>= 0 (unit :health)))
+                           {:type :floor}
+                           unit))
+                       board))))
 
 (defn warrior-at-stairs? [state]
   (->> (state :board)
@@ -167,9 +153,74 @@
        (map :at-stairs)
        (some true?)))
 
+(defn increment-tick [state]
+  (update state :tick inc))
+
+(defn check-warrior-dead [state]
+  (if (= 0.0 (:health (get-warrior (state :board))))
+    (-> state
+        (assoc :game-over? true)
+        (add-message "You are dead. Game over."))
+    state))
+
+(defn check-warrior-stalled [state]
+  (if (< 10 (state :tick))
+    (-> state
+        (assoc :game-over? true)
+        (add-message "You have taken too long. Game over."))
+    state))
+
+(defmulti take-enemy-action
+  (fn [state enemy action]
+    (first action)))
+
+(defmethod take-enemy-action :shoot
+  [state enemy _]
+  (let [warrior (get-warrior (state :board))
+        strength (enemy :shoot-power)
+        new-health (max 0.0 (- (:health warrior) strength))
+        health-delta (- (:health warrior) new-health)]
+    (-> state
+        (add-message (str "A " (name (enemy :type)) " shoots you"))
+        (add-message (str "You lose " health-delta " health, down to " new-health))
+        (update-at (:position warrior) :health (fn [_] new-health)))))
+
+(defmethod take-enemy-action :attack
+  [state enemy _]
+  (let [warrior (get-warrior (state :board))
+        strength (enemy :attack-power)
+        new-health (max 0.0 (- (:health warrior) strength))
+        health-delta (- (:health warrior) new-health)]
+    (-> state
+        (add-message (str "A " (name (enemy :type)) " attacks you"))
+        (add-message (str "You lose " health-delta " health, down to " new-health))
+        (update-at (:position warrior) :health (fn [_] new-health)))))
+
+(defn take-npc-actions [state]
+  (let [enemies (helpers/listen state)]
+    (reduce
+      (fn [state enemy]
+        (if (enemy :logic)
+          (take-enemy-action state enemy ((enemy :logic) state))
+          state))
+      state
+      enemies)))
+
+(defn play-turn [init-state users-code]
+  (let [warrior-action (users-code (get-public-state init-state))
+        ; TODO validate warrior-action
+        ]
+    (-> init-state
+        increment-tick
+        (take-warrior-action warrior-action)
+        remove-dead-units
+        take-npc-actions
+        check-warrior-dead
+        check-warrior-stalled)))
+
 (defn play-level [history users-code]
   (if (or
-        (> (count history) 20)
+        (:game-over? (last history))
         (warrior-at-stairs? (last history)))
     history
     (play-level (conj history (play-turn (last history) users-code)) users-code)))
@@ -181,12 +232,15 @@
 (defn play-levels [level-definitions users-code]
   (let [history (reduce
                   (fn [memo ld]
-                    (concat memo
-                            (play-level
-                              [{:messages (conj (:messages (last memo))
-                                                (str "You enter room " (ld :id)))
-                                :board (import/extract-board (ld :board))}]
-                              users-code)))
+                    (if (:game-over? (last memo))
+                      memo
+                      (concat memo
+                              (play-level
+                                [{:messages (conj (:messages (last memo))
+                                                  (str "You enter room " (ld :id)))
+                                  :board (import/extract-board (ld :board))
+                                  :tick 0}]
+                                users-code))))
                   [{:messages ["You enter the tower"]}] level-definitions)]
     (update-in (vec history) [(dec (count history)) :messages]
                  conj "You have reached the top of the tower")))

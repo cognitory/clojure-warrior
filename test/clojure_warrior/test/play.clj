@@ -341,16 +341,20 @@
 (deftest play-turn
   (testing "play-turn"
     (let [init-state {:board [[{:type :warrior
+                                :health 10.0
                                 :direction :east}
                                {:type :floor}]]
-                      :messages []}
+                      :messages []
+                      :tick 0}
           users-code (fn [state]
                        [:walk :forward])]
 
       (is (= {:board [[{:type :floor}
                        {:type :warrior
+                        :health 10.0
                         :direction :east}]]
-              :messages ["You walk forward"]}
+              :messages ["You walk forward"]
+              :tick 1}
              (play/play-turn init-state users-code))))))
 
 (deftest start-level
@@ -370,7 +374,24 @@
                "You walk forward"
                "You walk forward"
                "You walk up the stairs"]]
-             (map :messages (play/start-level level user-code)))))))
+             (map :messages (play/start-level level user-code))))))
+
+  (testing "player death"
+    (let [level {:id 1
+                 :board [[:*> :<w]]}
+          user-code (fn [state]
+                      [:walk :forward])]
+      (is (= ["You enter room 1"
+              "You walk forward"
+              "You bump into a wizard"
+              "A wizard shoots you"
+              "You lose 11.0 health, down to 9.0"
+              "You walk forward"
+              "You bump into a wizard"
+              "A wizard shoots you"
+              "You lose 9.0 health, down to 0.0"
+              "You are dead. Game over."]
+             (:messages (last (play/start-level level user-code))))))))
 
 (deftest play-levels
   (testing "play-levels"
@@ -389,12 +410,17 @@
                 "You walk forward"
                 "You walk up the stairs"
                 "You have reached the top of the tower"]
-               (last (map :messages (play/play-levels levels user-code)))))))))
+               (last (map :messages (play/play-levels levels user-code)))))))
 
-(deftest take-env-actions
-  (testing "removes dead units"
-    (is (= {:board [[{:type :floor} {:health 10} {:type :wall}]]}
-           (play/take-env-actions {:board [[{:health 0} {:health 10} {:type :wall}]]})))))
+    (testing "lose game, due to death"
+      (let [levels [{:id 1
+                     :board [[:*> :-- :<a :__]]}
+                    {:id 2
+                     :board [[:*> :-- :<w :__]]}]
+            user-code (fn [state]
+                        [:attack :forward])]
+        (is (= true
+               (:game-over? (last (play/play-levels levels user-code)))))))))
 
 (deftest get-public-unit
   (let [private-unit {:type :archer

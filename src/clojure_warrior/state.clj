@@ -62,8 +62,11 @@
 (defn add-message [state message]
   (update state :messages conj message))
 
-(defn assoc-at [state position value]
+(defn set-at [state position value]
   (assoc-in state [:board (last position) (first position)] value))
+
+(defn assoc-at [state position k value]
+  (assoc-in state [:board (last position) (first position) k] value))
 
 (defn update-at [state position k fn]
   (update-in state [:board (last position) (first position) k] fn))

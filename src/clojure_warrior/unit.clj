@@ -8,6 +8,7 @@
                                    first-unit-in-range
                                    action-target-position
                                    add-message
+                                   set-at
                                    assoc-at
                                    update-at]]))
 
@@ -25,13 +26,13 @@
         (cond
           (= :floor (:type target))
           (-> $
-              (assoc-at (warrior :position) {:type :floor})
-              (assoc-at (target :position) (dissoc warrior :position)))
+              (set-at (warrior :position) {:type :floor})
+              (set-at (target :position) (dissoc warrior :position)))
           (= :stairs (:type target))
           (-> $
               (add-message "You walk up the stairs")
-              (assoc-at (warrior :position) {:type :floor})
-              (assoc-at (target :position) (-> warrior
+              (set-at (warrior :position) {:type :floor})
+              (set-at (target :position) (-> warrior
                                                (assoc :at-stairs true)
                                                (dissoc :position))))
           :else
@@ -46,7 +47,7 @@
     (-> state
         (add-message "You pivot")
         (add-message (str "You are now facing " (name new-direction)))
-        (update-at (warrior :position) :direction (fn [_] new-direction)))))
+        (assoc-at (warrior :position) :direction new-direction))))
 
 (defmethod take-warrior-action :rest
   [state _]
@@ -60,7 +61,7 @@
         (if (> health-delta 0)
           (add-message $ (str "You receive " health-delta " health from resting, up to " new-health " health"))
           (add-message $ (str "You are already fit as a fiddle")))
-        (update-at $ (warrior :position) :health (fn [health] new-health)))))
+        (assoc-at $ (warrior :position) :health new-health))))
 
 (defmethod take-warrior-action :attack
   [state [_ direction]]
@@ -81,9 +82,7 @@
                                 (if (< 0 target-new-health)
                                   (str "and has " target-new-health " health left")
                                   (str "and dies"))))
-              (update-at target-position :health
-                         (fn [health]
-                           target-new-health))))
+              (assoc-at target-position :health target-new-health)))
         (add-message $ "You hit nothing")))))
 
 (defmethod take-warrior-action :shoot
@@ -111,7 +110,7 @@
       (if (and target (= :captive (:type target)))
         (-> $
             (add-message "You unbind and rescue a captive")
-            (assoc-at (target :position) {:type :floor})
+            (set-at (target :position) {:type :floor})
             (update-at (warrior :position) :points (fn [points]
                                                      (+ points 20)))
             (add-message "You earn 20 points"))

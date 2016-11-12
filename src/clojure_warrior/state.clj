@@ -1,5 +1,7 @@
 (ns clojure-warrior.state)
 
+; getters
+
 (defn get-units
   "Returns list of units, with their positions"
   [board]
@@ -54,3 +56,14 @@
     [:west :backward] (update-in (warrior :position) [0] inc)
     [:west :forward] (update-in (warrior :position) [0] dec)
     [:east :backward] (update-in (warrior :position) [0] dec)))
+
+; modifiers
+
+(defn add-message [state message]
+  (update state :messages conj message))
+
+(defn assoc-at [state position value]
+  (assoc-in state [:board (last position) (first position)] value))
+
+(defn update-at [state position k fn]
+  (update-in state [:board (last position) (first position) k] fn))

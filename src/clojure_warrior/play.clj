@@ -12,7 +12,9 @@
           (mapv f row)) board))
 
 (defn get-public-unit [unit]
-  (select-keys unit [:type :enemy? :health :direction :melee? :ranged?]))
+  (select-keys unit [:type :health :direction
+                     :enemy? :melee? :ranged?
+                     :captive? :empty? :stairs?]))
 
 (defn get-public-state [state]
   (->> state

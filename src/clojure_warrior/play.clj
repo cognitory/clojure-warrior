@@ -71,7 +71,7 @@
     (-> state
         (add-message (str "A " (name (enemy :type)) " shoots you"))
         (add-message (str "You lose " health-delta " health, down to " new-health))
-        (update-at (:position warrior) :health (fn [_] new-health)))))
+        (assoc-at (:position warrior) :health new-health))))
 
 (defmethod take-enemy-action :attack
   [state enemy _]
@@ -82,7 +82,7 @@
     (-> state
         (add-message (str "A " (name (enemy :type)) " attacks you"))
         (add-message (str "You lose " health-delta " health, down to " new-health))
-        (update-at (:position warrior) :health (fn [_] new-health)))))
+        (assoc-at (:position warrior) :health new-health))))
 
 (defn take-npc-actions [state]
   (let [enemies (helpers/listen state)]

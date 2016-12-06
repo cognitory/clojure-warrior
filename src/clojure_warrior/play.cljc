@@ -91,13 +91,19 @@
       state
       enemies)))
 
+(defn store-warrior-action [state action]
+    (let [[x y] (:position (get-warrior (state :board)))]
+      (assoc-in state [:board y x :action] action)))
+
 (defn play-turn [init-state users-code]
   (let [warrior-action (users-code (get-public-state init-state))
         ; TODO validate warrior-action
         post-warrior-state (-> init-state
                                increment-tick
+                               (store-warrior-action warrior-action)
                                (take-warrior-action warrior-action))
         post-env-state (-> post-warrior-state
+                           (store-warrior-action nil)
                            remove-dead-units)
         post-npc-state (-> post-env-state
                            take-npc-actions)

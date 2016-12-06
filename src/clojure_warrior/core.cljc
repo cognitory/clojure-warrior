@@ -1,5 +1,5 @@
 (ns clojure-warrior.core
-  (:gen-class)
+  #?(:clj (:gen-class))
   (:require
     [clojure-warrior.helpers :refer [look feel listen
                                      stairs warrior

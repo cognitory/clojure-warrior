@@ -138,5 +138,7 @@
                                   :tick 0}]
                                 users-code))))
                   [{:messages ["You enter the tower"]}] level-definitions)]
-    (update-in (vec history) [(dec (count history)) :messages]
-                 conj "You have reached the top of the tower")))
+    (if (:game-over? (last history))
+      (vec history)
+      (update-in (vec history) [(dec (count history)) :messages]
+                 conj "You have reached the top of the tower"))))

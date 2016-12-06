@@ -79,7 +79,10 @@
             user-code (fn [state]
                         [:attack :forward])]
         (is (= true
-               (:game-over? (last (play/play-levels levels user-code)))))))))
+               (:game-over? (last (play/play-levels levels user-code)))))
+
+        (is (= "You are dead. Game over."
+              (last (:messages (last (play/play-levels levels user-code))))))))))
 
 (deftest get-public-unit
   (let [private-unit {:type :archer

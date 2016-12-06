@@ -27,8 +27,7 @@
                                      {:type :warrior
                                       :at-stairs true
                                       :direction :east}]]
-                            :messages ["You walk forward"
-                                       "You walk up the stairs"]}]
+                            :messages ["You walk forward and up the stairs"]}]
         (is (= expected-state (unit/take-warrior-action state action)))))
 
     (testing "can walk backward when open space"
@@ -64,8 +63,7 @@
             expected-state {:board [[{:type :warrior
                                       :direction :east}
                                      {:type :wall}]]
-                            :messages ["You walk forward"
-                                       "You bump into a wall"]}]
+                            :messages ["You walk forward and bump into a wall"]}]
         (is (= expected-state (unit/take-warrior-action state action))))))
 
   (testing "pivot"
@@ -76,8 +74,7 @@
             action [:pivot]
             expected-state {:board [[{:type :warrior
                                       :direction :west}]]
-                            :messages ["You pivot"
-                                       "You are now facing west"]}]
+                            :messages ["You pivot and are now facing west"]}]
         (is (= expected-state (unit/take-warrior-action state action)))))
 
     (testing "turns warrior east->west"
@@ -87,8 +84,7 @@
             action [:pivot]
             expected-state {:board [[{:type :warrior
                                       :direction :east}]]
-                            :messages ["You pivot"
-                                       "You are now facing east"]}]
+                            :messages ["You pivot and are now facing east"]}]
         (is (= expected-state (unit/take-warrior-action state action))))))
 
   (testing "rest"
@@ -101,8 +97,7 @@
             expected-state {:board [[{:type :warrior
                                       :max-health 20.0
                                       :health 7.0}]]
-                            :messages ["You rest"
-                                       "You receive 2.0 health from resting, up to 7.0 health"]}]
+                            :messages ["You rest and receive 2.0 health from resting, up to 7.0 health"]}]
         (is (= expected-state (unit/take-warrior-action state action)))))
 
     (testing "does not get more than max-health"
@@ -114,8 +109,7 @@
             expected-state {:board [[{:type :warrior
                                       :max-health 20.0
                                       :health 20.0}]]
-                            :messages ["You rest"
-                                       "You receive 1.0 health from resting, up to 20.0 health"]}]
+                            :messages ["You rest and receive 1.0 health from resting, up to 20.0 health"]}]
         (is (= expected-state (unit/take-warrior-action state action)))))
 
     (testing "does not heal at max-health"
@@ -127,8 +121,7 @@
             expected-state {:board [[{:type :warrior
                                       :max-health 20.0
                                       :health 20.0}]]
-                            :messages ["You rest"
-                                       "You are already fit as a fiddle"]}]
+                            :messages ["You rest but are already fit as a fiddle"]}]
         (is (= expected-state (unit/take-warrior-action state action))))))
 
   (testing "attack"
@@ -145,8 +138,7 @@
                                       :direction :east}
                                      {:type :whatever
                                       :health 5.0}]]
-                            :messages ["You attack forward"
-                                       "A whatever takes 5.0 damage, and has 5.0 health left"]}]
+                            :messages ["You attack forward and a whatever takes 5.0 damage, and has 5.0 health left"]}]
         (is (= expected-state (unit/take-warrior-action state action)))))
 
     (testing "can kill a unit"
@@ -162,8 +154,7 @@
                                       :direction :east}
                                      {:type :whatever
                                       :health 0.0}]]
-                            :messages ["You attack forward"
-                                       "A whatever takes 5.0 damage, and dies"]}]
+                            :messages ["You attack forward and a whatever takes 5.0 damage, and dies"]}]
         (is (= expected-state (unit/take-warrior-action state action)))))
 
     (testing "can attack backward (at 50% reduced strength)"
@@ -179,8 +170,7 @@
                                       :direction :west}
                                      {:type :whatever
                                       :health 7.5}]]
-                            :messages ["You attack backward"
-                                       "A whatever takes 2.5 damage, and has 7.5 health left"]}]
+                            :messages ["You attack backward and a whatever takes 2.5 damage, and has 7.5 health left"]}]
         (is (= expected-state (unit/take-warrior-action state action)))))
 
     (testing "attacking object without health has no effect"
@@ -194,8 +184,7 @@
                                       :attack-power 5.0
                                       :direction :west}
                                      {:type :whatever}]]
-                            :messages ["You attack forward"
-                                       "You hit nothing"]}]
+                            :messages ["You attack forward but you hit nothing"]}]
         (is (= expected-state (unit/take-warrior-action state action))))))
 
   (testing "shoot"
@@ -213,8 +202,7 @@
                                         :direction :east}
                                        {:type :whatever
                                         :health 7.0}]]
-                              :messages ["You shoot forward"
-                                         "A whatever takes 3.0 damage, and has 7.0 health left"]}]
+                              :messages ["You shoot forward and a whatever takes 3.0 damage, and has 7.0 health left"]}]
           (is (= expected-state (unit/take-warrior-action state action)))))
 
       (testing "can shoot forward (range 3)"
@@ -234,8 +222,7 @@
                                        {:type :floor}
                                        {:type :whatever
                                         :health 7.0}]]
-                              :messages ["You shoot forward"
-                                         "A whatever takes 3.0 damage, and has 7.0 health left"]}]
+                              :messages ["You shoot forward and a whatever takes 3.0 damage, and has 7.0 health left"]}]
           (is (= expected-state (unit/take-warrior-action state action)))))
 
       (testing "when nothing is in range, no effect"
@@ -253,8 +240,7 @@
                                        {:type :floor}
                                        {:type :floor}
                                        {:type :floor}]]
-                              :messages ["You shoot forward"
-                                         "You hit nothing"]}]
+                              :messages ["You shoot forward but you hit nothing"]}]
           (is (= expected-state (unit/take-warrior-action state action)))))
 
       (testing "can shoot backward"
@@ -270,8 +256,7 @@
                                         :direction :west}
                                        {:type :whatever
                                         :health 7.0}]]
-                              :messages ["You shoot backward"
-                                         "A whatever takes 3.0 damage, and has 7.0 health left"]}]
+                              :messages ["You shoot backward and a whatever takes 3.0 damage, and has 7.0 health left"]}]
           (is (= expected-state (unit/take-warrior-action state action)))))
 
       (testing "shooting object without health has no effect"
@@ -285,8 +270,7 @@
                                         :shoot-power 5.0
                                         :direction :east}
                                        {:type :whatever}]]
-                              :messages ["You shoot forward"
-                                         "You hit nothing"]}]
+                              :messages ["You shoot forward but you hit nothing"]}]
           (is (= expected-state (unit/take-warrior-action state action)))))))
 
   (testing "rescue"
@@ -302,9 +286,7 @@
                                         :points 20.0
                                         :direction :east}
                                        {:type :floor}]]
-                              :messages ["You rescue forward"
-                                         "You unbind and rescue a captive"
-                                         "You earn 20 points"]}]
+                              :messages ["You reach forward and unbind a captive. You earn 20 points."]}]
           (is (= expected-state (unit/take-warrior-action state action)))))
 
       (testing "can rescue backward"
@@ -318,9 +300,7 @@
                                         :points 20.0
                                         :direction :west}
                                        {:type :floor}]]
-                              :messages ["You rescue backward"
-                                         "You unbind and rescue a captive"
-                                         "You earn 20 points"]}]
+                              :messages ["You reach backward and unbind a captive. You earn 20 points."]}]
           (is (= expected-state (unit/take-warrior-action state action))))))
 
     (testing "if not a captive, no effect"
@@ -334,6 +314,5 @@
                                       :points 0.0
                                       :direction :east}
                                      {:type :whatever}]]
-                            :messages ["You rescue forward"
-                                       "There is no captive to rescue"]}]
+                            :messages ["You reach forward but there is no captive to rescue"]}]
         (is (= expected-state (unit/take-warrior-action state action)))))))

@@ -66,8 +66,8 @@
         new-health (max 0.0 (- (:health warrior) strength))
         health-delta (- (:health warrior) new-health)]
     (-> state
-        (add-message (str "A " (name (enemy :type)) " shoots you"))
-        (add-message (str "You lose " health-delta " health, down to " new-health))
+        (add-message (str "A " (name (enemy :type)) " shoots you"
+                          " and you lose " health-delta " health, down to " new-health))
         (assoc-at (:position warrior) :health new-health))))
 
 (defmethod take-enemy-action :attack
@@ -77,8 +77,8 @@
         new-health (max 0.0 (- (:health warrior) strength))
         health-delta (- (:health warrior) new-health)]
     (-> state
-        (add-message (str "A " (name (enemy :type)) " attacks you"))
-        (add-message (str "You lose " health-delta " health, down to " new-health))
+        (add-message (str "A " (name (enemy :type)) " attacks you"
+                          " and you lose " health-delta " health, down to " new-health))
         (assoc-at (:position warrior) :health new-health))))
 
 (defn take-npc-actions [state]
@@ -94,21 +94,32 @@
 (defn play-turn [init-state users-code]
   (let [warrior-action (users-code (get-public-state init-state))
         ; TODO validate warrior-action
-        ]
-    (-> init-state
-        increment-tick
-        (take-warrior-action warrior-action)
-        remove-dead-units
-        take-npc-actions
-        check-warrior-dead
-        check-warrior-stalled)))
+        post-warrior-state (-> init-state
+                               increment-tick
+                               (take-warrior-action warrior-action))
+        post-env-state (-> post-warrior-state
+                           remove-dead-units)
+        post-npc-state (-> post-env-state
+                           take-npc-actions)
+        post-env2-state (-> post-npc-state
+                            check-warrior-dead
+                            check-warrior-stalled)]
+    (remove nil?
+            [post-warrior-state
+             (when (not= post-env-state post-warrior-state)
+               post-env-state)
+             (when (not= post-npc-state post-env-state)
+               post-npc-state)
+             (when (not= post-env2-state post-npc-state)
+               post-env2-state)])))
 
 (defn play-level [history users-code]
   (if (or
         (:game-over? (last history))
         (warrior-at-stairs? (last history)))
     history
-    (play-level (conj history (play-turn (last history) users-code)) users-code)))
+    (play-level (concat history
+                      (play-turn (last history) users-code)) users-code)))
 
 (defn start-level [level-definition users-code]
   (let [init-state [(import/generate-initial-level-state level-definition)]]

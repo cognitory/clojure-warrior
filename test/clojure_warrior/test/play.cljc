@@ -14,12 +14,12 @@
           users-code (fn [state]
                        [:walk :forward])]
 
-      (is (= {:board [[{:type :floor}
-                       {:type :warrior
-                        :health 10.0
-                        :direction :east}]]
-              :messages ["You walk forward"]
-              :tick 1}
+      (is (= [{:board [[{:type :floor}
+                         {:type :warrior
+                          :health 10.0
+                          :direction :east}]]
+                :messages ["You walk forward"]
+                :tick 1}]
              (play/play-turn init-state users-code))))))
 
 (deftest start-level
@@ -37,8 +37,7 @@
               ["You enter room 1"
                "You walk forward"
                "You walk forward"
-               "You walk forward"
-               "You walk up the stairs"]]
+               "You walk forward and up the stairs"]]
              (map :messages (play/start-level level user-code))))))
 
   (testing "player death"
@@ -47,14 +46,10 @@
           user-code (fn [state]
                       [:walk :forward])]
       (is (= ["You enter room 1"
-              "You walk forward"
-              "You bump into a wizard"
-              "A wizard shoots you"
-              "You lose 11.0 health, down to 9.0"
-              "You walk forward"
-              "You bump into a wizard"
-              "A wizard shoots you"
-              "You lose 9.0 health, down to 0.0"
+              "You walk forward and bump into a wizard"
+              "A wizard shoots you and you lose 11.0 health, down to 9.0"
+              "You walk forward and bump into a wizard"
+              "A wizard shoots you and you lose 9.0 health, down to 0.0"
               "You are dead. Game over."]
              (:messages (last (play/start-level level user-code))))))))
 
@@ -67,13 +62,12 @@
                      :board [[:*> :__]]}]
             user-code (fn [state]
                         [:walk :forward])]
+
         (is (= ["You enter the tower"
                 "You enter room 1"
-                "You walk forward"
-                "You walk up the stairs"
+                "You walk forward and up the stairs"
                 "You enter room 2"
-                "You walk forward"
-                "You walk up the stairs"
+                "You walk forward and up the stairs"
                 "You have reached the top of the tower"]
                (last (map :messages (play/play-levels levels user-code)))))))
 

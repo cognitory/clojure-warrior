@@ -12,22 +12,31 @@
   [state]
   (s/get-warrior (state :board)))
 
+(defn look-generic
+  [state unit direction limit]
+  (s/first-unit-in-range
+    (state :board)
+    unit
+    direction
+    limit))
+
 (defn look
   "Returns the first non-empty space in given direction from the warrior"
   [state direction]
-  (s/first-unit-in-range
+  (look-generic state (warrior state) direction 1000))
+
+(defn feel-generic
+  [state unit direction]
+  (s/unit-at-position
     (state :board)
-    (warrior state)
-    direction
-    10000))
+    (s/action-target-position
+      unit
+      direction)))
 
 (defn feel
   "Return the space 1 unit in given direction from the warrior"
   [state direction]
-  (s/unit-at-position (state :board)
-    (s/action-target-position
-      (warrior state)
-      direction)))
+  (feel-generic state (warrior state) direction))
 
 (defn listen
   "Returns a list of all enemies and captives"

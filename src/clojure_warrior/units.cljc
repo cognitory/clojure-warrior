@@ -1,22 +1,24 @@
 (ns clojure-warrior.units
   (:require
-    [clojure-warrior.helpers :refer [look feel]]))
+    [clojure-warrior.helpers :refer [look-generic feel-generic]]))
 
-(defn melee-unit-logic [state]
-  [:attack]
-  #_(cond
-    (= :warrior (:type (feel state :forward)))
+(defn melee-unit-logic [state self]
+  (cond
+    (= :warrior (:type (feel-generic state self :forward)))
     [:attack :forward]
-    (= :warrior (:type (feel state :backward)))
-    [:attack :backward]))
+    (= :warrior (:type (feel-generic state self :backward)))
+    [:attack :backward]
+    :else
+    [:rest]))
 
-(defn ranged-unit-logic [state]
-  [:shoot]
-  #_(cond
-    (= :warrior (:type (look state :forward)))
+(defn ranged-unit-logic [state self]
+  (cond
+    (= :warrior (:type (look-generic state self :forward 2)))
     [:shoot :forward]
-    (= :warrior (:type (look state :backward)))
-    [:shoot :backward]))
+    (= :warrior (:type (look-generic state self :backward 2)))
+    [:shoot :backward]
+    :else
+    [:rest]))
 
 (def reference
   {:captive

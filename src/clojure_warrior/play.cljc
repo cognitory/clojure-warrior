@@ -59,6 +59,11 @@
   (fn [state enemy action]
     (first action)))
 
+(defmethod take-enemy-action :rest
+  [state enemy _]
+  ; do nothing
+  state)
+
 (defmethod take-enemy-action :shoot
   [state enemy _]
   (let [warrior (get-warrior (state :board))
@@ -86,7 +91,7 @@
     (reduce
       (fn [state enemy]
         (if (enemy :logic)
-          (take-enemy-action state enemy ((enemy :logic) state))
+          (take-enemy-action state enemy ((enemy :logic) state enemy))
           state))
       state
       enemies)))

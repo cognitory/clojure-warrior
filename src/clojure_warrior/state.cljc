@@ -43,7 +43,7 @@
          get-units
          maybe-reverse
          (drop-while (fn [u]
-                       (not= (:type u) :warrior)))
+                       (not= (:position u) (:position unit))))
          (drop 1)
          (take action-range)
          (remove (fn [u]

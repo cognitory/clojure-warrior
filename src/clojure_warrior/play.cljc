@@ -1,6 +1,6 @@
 (ns clojure-warrior.play
   (:require
-    [clojure-warrior.import :as import]
+    [clojure-warrior.extract :as extract]
     [clojure-warrior.helpers :as helpers]
     [clojure-warrior.unit :refer [take-warrior-action]]
     [clojure-warrior.state :refer [get-warrior
@@ -128,7 +128,7 @@
                       (play-turn (last history) users-code)) users-code)))
 
 (defn start-level [level-definition users-code]
-  (let [init-state [(import/generate-initial-level-state level-definition)]]
+  (let [init-state [(extract/generate-initial-level-state level-definition)]]
     (play-level init-state users-code)))
 
 (defn play-levels [level-definitions users-code]
@@ -140,7 +140,7 @@
                               (play-level
                                 [{:messages (conj (:messages (last memo))
                                                   (str "You enter room " (ld :id)))
-                                  :board (import/extract-board (ld :board))
+                                  :board (extract/extract-board (ld :board))
                                   :tick 0}]
                                 users-code))))
                   [{:messages ["You enter the tower"]}] level-definitions)]

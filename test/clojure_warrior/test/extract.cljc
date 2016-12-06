@@ -1,4 +1,4 @@
-(ns clojure-warrior.test.import
+(ns clojure-warrior.test.extract
   (:require
     [clojure.test :refer [deftest testing is]]
     [clojure-warrior.import :as import]))

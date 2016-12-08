@@ -1,5 +1,6 @@
 (ns clojure-warrior.play
   (:require
+    [clojure-warrior.units :as units]
     [clojure-warrior.extract :as extract]
     [clojure-warrior.helpers :as helpers]
     [clojure-warrior.unit :refer [take-warrior-action]]
@@ -28,7 +29,7 @@
                          (if (and
                                (contains? unit :health)
                                (>= 0 (unit :health)))
-                           {:type :floor}
+                           (units/reference :floor)
                            unit))
                        board))))
 

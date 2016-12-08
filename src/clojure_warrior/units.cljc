@@ -87,6 +87,7 @@
    :stairs
    {:type :stairs
     :stairs? true
+    :empty? true
     :environment? true
     :define-char \_
     :display-char \>}

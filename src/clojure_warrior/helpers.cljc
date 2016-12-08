@@ -4,44 +4,44 @@
 
 (defn stairs
   "Returns the stairs"
-  [state]
-  (s/get-stairs (state :board)))
+  [board]
+  (s/get-stairs board))
 
 (defn warrior
   "Returns the warrior"
-  [state]
-  (s/get-warrior (state :board)))
+  [board]
+  (s/get-warrior board))
 
 (defn look-generic
-  [state unit direction limit]
+  [board unit direction limit]
   (s/first-unit-in-range
-    (state :board)
+    board
     unit
     direction
     limit))
 
 (defn look
   "Returns the first non-empty space in given direction from the warrior"
-  [state direction]
-  (look-generic state (warrior state) direction 1000))
+  [board direction]
+  (look-generic board (warrior board) direction 1000))
 
 (defn feel-generic
-  [state unit direction]
+  [board unit direction]
   (s/unit-at-position
-    (state :board)
+    board
     (s/action-target-position
       unit
       direction)))
 
 (defn feel
   "Return the space 1 unit in given direction from the warrior"
-  [state direction]
-  (feel-generic state (warrior state) direction))
+  [board direction]
+  (feel-generic board (warrior board) direction))
 
 (defn listen
   "Returns a list of all enemies and captives"
-  [state]
-  (->> (s/get-units (state :board))
+  [board]
+  (->> (s/get-units board)
        (remove (fn [u]
                  (contains? #{:warrior :floor :wall :stairs} (:type u))))))
 
@@ -52,12 +52,12 @@
 
 (defn distance-to
   "Returns the number of steps from the warrior to a position"
-  [state target-position]
-  (let [warrior-position (:position (warrior state))]
+  [board target-position]
+  (let [warrior-position (:position (warrior board))]
     (+ (abs (- (first target-position) (first warrior-position)))
        (abs (- (last target-position) (last warrior-position))))))
 
 (defn inspect
   "Returns the space at the given position"
-  [state target-position]
-  (s/unit-at-position (state :board) target-position))
+  [board target-position]
+  (s/unit-at-position board target-position))

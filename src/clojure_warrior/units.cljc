@@ -2,23 +2,23 @@
   (:require
     [clojure-warrior.helpers :refer [look-generic feel-generic]]))
 
-(defn melee-unit-logic [state self]
+(defn melee-unit-logic [board self]
   (cond
-    (= :warrior (:type (feel-generic state self :forward)))
+    (= :warrior (:type (feel-generic board self :forward)))
     [:attack :forward]
-    (= :warrior (:type (feel-generic state self :backward)))
+    (= :warrior (:type (feel-generic board self :backward)))
     [:attack :backward]
     :else
-    [:rest]))
+    nil))
 
-(defn ranged-unit-logic [state self]
+(defn ranged-unit-logic [board self]
   (cond
-    (= :warrior (:type (look-generic state self :forward 2)))
+    (= :warrior (:type (look-generic board self :forward 2)))
     [:shoot :forward]
-    (= :warrior (:type (look-generic state self :backward 2)))
+    (= :warrior (:type (look-generic board self :backward 2)))
     [:shoot :backward]
     :else
-    [:rest]))
+    nil))
 
 (def reference
   {:captive

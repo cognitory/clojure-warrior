@@ -87,13 +87,29 @@
                           " and you lose " health-delta " health, down to " new-health))
         (assoc-at (:position warrior) :health new-health))))
 
+(defn store-enemy-action [state enemy action]
+    (let [[x y] (:position enemy)]
+      (assoc-in state [:board y x :action] action)))
+
 (defn take-npc-actions [state]
-  (let [enemies (helpers/listen state)]
+  (let [enemies (helpers/listen (state :board))]
     (reduce
       (fn [state enemy]
         (if (enemy :logic)
-          (take-enemy-action state enemy ((enemy :logic) state enemy))
+          (if-let [action ((enemy :logic) (state :board) enemy)]
+            (-> state
+                (store-enemy-action enemy action)
+                (take-enemy-action enemy action))
+            state)
           state))
+      state
+      enemies)))
+
+(defn reset-npc-actions [state]
+  (let [enemies (helpers/listen (state :board))]
+    (reduce
+      (fn [state enemy]
+        (store-enemy-action state enemy nil))
       state
       enemies)))
 
@@ -114,6 +130,7 @@
         post-npc-state (-> post-env-state
                            take-npc-actions)
         post-env2-state (-> post-npc-state
+                            reset-npc-actions
                             check-warrior-dead
                             check-warrior-stalled)]
     (remove nil?

@@ -4,15 +4,14 @@
     [clojure-warrior.helpers :as helpers]))
 
 (def sample-state
-  {:messages []
-   :board [[{:type :wall}
-            {:type :warrior
-             :direction :east}
-            {:type :floor}
-            {:type :slug}
-            {:type :archer}
-            {:type :stairs}
-            {:type :wall}]]})
+  [[{:type :wall}
+    {:type :warrior
+     :direction :east}
+    {:type :floor}
+    {:type :slug}
+    {:type :archer}
+    {:type :stairs}
+    {:type :wall}]])
 
 (deftest stairs
   (testing "stairs"

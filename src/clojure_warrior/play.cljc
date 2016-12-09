@@ -1,5 +1,6 @@
 (ns clojure-warrior.play
   (:require
+    [clojure.string :as string]
     [clojure-warrior.units :as units]
     [clojure-warrior.extract :as extract]
     [clojure-warrior.helpers :as helpers]
@@ -118,12 +119,26 @@
       (assoc-in state [:board y x :action] action)))
 
 (defn play-turn [init-state users-code]
-  (let [warrior-action (users-code (get-public-state init-state))
+  (let [log-messages (atom [])
+        logged-warrior-action (fn [state]
+                                (with-redefs [helpers/say
+                                          (fn [& args]
+                                            (swap! log-messages conj
+                                                   (str "> " (string/join " " args))))]
+                                  (users-code state)))
+        add-log-messages (fn [state]
+                          (update state :messages (fn [messages]
+                                                    (vec (concat messages @log-messages)))))
+
+        warrior-action (logged-warrior-action (get-public-state init-state))
+
         ; TODO validate warrior-action
+
         post-warrior-state (-> init-state
                                increment-tick
                                (store-warrior-action warrior-action)
-                               (take-warrior-action warrior-action))
+                               (take-warrior-action warrior-action)
+                               add-log-messages)
         post-env-state (-> post-warrior-state
                            (store-warrior-action nil)
                            remove-dead-units)

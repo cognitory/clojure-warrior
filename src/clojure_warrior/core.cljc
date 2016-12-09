@@ -12,11 +12,18 @@
 (def stairs helpers/stairs)
 (def warrior helpers/warrior)
 
+(def say helpers/say)
+
 (def distance-to helpers/distance-to)
 
 
 (defn enter-the-tower!
-  [warrior-name warrior-code]
-  ; TODO
-  )
+  [user-code]
+  (let [levels [{:id 1
+                 :board [[:*> :-- :<a :__]]}
+                {:id 2
+                 :board [[:*> :__]]}]]
+    (play/play-levels levels user-code)))
+
+
 (def play-levels! play/play-levels)

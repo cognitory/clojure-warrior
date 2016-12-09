@@ -2,6 +2,10 @@
   (:require
     [clojure-warrior.state :as s]))
 
+(defn say [& args]
+  ; redefined in .play to log to state messages
+  )
+
 (defn stairs
   "Returns the stairs"
   [board]

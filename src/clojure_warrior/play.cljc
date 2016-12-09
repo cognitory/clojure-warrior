@@ -137,8 +137,8 @@
         post-warrior-state (-> init-state
                                increment-tick
                                (store-warrior-action warrior-action)
-                               (take-warrior-action warrior-action)
-                               add-log-messages)
+                               add-log-messages
+                               (take-warrior-action warrior-action))
         post-env-state (-> post-warrior-state
                            (store-warrior-action nil)
                            remove-dead-units)

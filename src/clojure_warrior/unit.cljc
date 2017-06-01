@@ -110,7 +110,7 @@
       (if (and target (= :captive (:type target)))
         (-> $
             (add-message (str action-text " and unbind a captive. You earn 20 points."))
-            (set-at (target :position) {:type :floor})
+            (assoc-at (target :position) :rescued? true)
             (update-at (warrior :position) :points (fn [points]
                                                      (+ points 20))))
         (add-message $ (str action-text " but there is no captive to rescue"))))))

@@ -23,6 +23,15 @@
        :board
        (map-units get-public-unit)))
 
+(defn remove-rescued-captives [state]
+  (update state :board
+          (fn [board]
+            (map-units (fn [unit]
+                         (if (unit :rescued?)
+                           (units/reference :floor)
+                           unit))
+                       board))))
+
 (defn remove-dead-units [state]
   (update state :board
           (fn [board]
@@ -141,7 +150,8 @@
                                (take-warrior-action warrior-action))
         post-env-state (-> post-warrior-state
                            (store-warrior-action nil)
-                           remove-dead-units)
+                           remove-dead-units
+                           remove-rescued-captives)
         post-npc-state (-> post-env-state
                            take-npc-actions)
         post-env2-state (-> post-npc-state

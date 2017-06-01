@@ -51,7 +51,7 @@
     state))
 
 (defn check-warrior-stalled [state]
-  (if (< 40 (state :tick))
+  (if (< 200 (state :tick))
     (-> state
         (assoc :game-over? true)
         (add-message "You have taken too long. Game over."))

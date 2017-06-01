@@ -85,7 +85,7 @@
 (defmethod take-warrior-action :shoot
   [state [_ direction]]
   (let [warrior (get-warrior (state :board))
-        target (first-unit-in-range (state :board) warrior direction 3)
+        target (first-unit-in-range (state :board) warrior direction 2)
         attack-power (warrior :shoot-power)
         action-text (str "You shoot " (name direction))]
     (as-> state $
